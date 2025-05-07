@@ -1,0 +1,7 @@
+package com.github.ar4ik4ik.tennisscoreboard.dto;
+
+import lombok.Builder;
+
+@Builder
+public record MatchResponseDto(Integer id) {
+}

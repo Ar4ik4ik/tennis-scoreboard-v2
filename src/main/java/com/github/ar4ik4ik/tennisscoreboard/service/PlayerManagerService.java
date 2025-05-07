@@ -1,0 +1,42 @@
+package com.github.ar4ik4ik.tennisscoreboard.service;
+
+import com.github.ar4ik4ik.tennisscoreboard.dto.PlayerRequestDto;
+import com.github.ar4ik4ik.tennisscoreboard.dto.PlayerResponseDto;
+import com.github.ar4ik4ik.tennisscoreboard.exceptions.PlayerNotFoundException;
+import com.github.ar4ik4ik.tennisscoreboard.repository.PlayerRepository;
+import static com.github.ar4ik4ik.tennisscoreboard.mappers.PlayerMapper.fromRequestDto;
+import static com.github.ar4ik4ik.tennisscoreboard.mappers.PlayerMapper.fromModel;
+
+public class PlayerManagerService {
+
+    private static final PlayerRepository playerRepository = PlayerRepository.getINSTANCE();
+    private static final PlayerManagerService INSTANCE = new PlayerManagerService();
+
+    public PlayerResponseDto getOrCreatePlayer(PlayerRequestDto requestDto) {
+        try {
+            return findPlayer(requestDto);
+        } catch (PlayerNotFoundException e) {
+            return createPlayer(requestDto);
+        }
+    }
+
+    public PlayerResponseDto createPlayer(PlayerRequestDto requestDto) {
+        return fromModel(playerRepository.save(fromRequestDto(requestDto)));
+    }
+
+    public PlayerResponseDto findPlayer(PlayerRequestDto requestDto) {
+        var foundedPlayer =  playerRepository.findByName(requestDto.name());
+        if (foundedPlayer.isPresent()) {
+            return fromModel(foundedPlayer.get());
+        } else {
+            throw new PlayerNotFoundException(String.format("Player with name: %s, not found", requestDto.name()));
+        }
+    }
+
+    public static PlayerManagerService getInstance() {
+        return INSTANCE;
+    }
+
+    private PlayerManagerService() {
+    }
+}

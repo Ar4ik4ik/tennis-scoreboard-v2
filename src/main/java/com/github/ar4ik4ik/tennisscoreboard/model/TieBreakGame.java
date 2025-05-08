@@ -49,7 +49,7 @@ public class TieBreakGame<T extends Competitor> implements Competition<T, Intege
         int scorerScore = competitor.equals(firstCompetitor) ? firstCompetitorScore : secondCompetitorScore;
         int opponentScore = competitor.equals(firstCompetitor) ? secondCompetitorScore : firstCompetitorScore;
 
-        return scorerScore >= rules.pointsToWin() && (scorerScore - opponentScore) >= rules.winBy();
+        return scorerScore >= rules.winBy() && (scorerScore - opponentScore) >= rules.pointsToWin();
     }
 
     private void incrementPoint(T competitor) {

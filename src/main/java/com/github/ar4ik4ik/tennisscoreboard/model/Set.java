@@ -55,10 +55,11 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
             return;
         }
 
+        incrementGames(competitor);
+
         if (isTieBreakMode()) {
             handleTieBreakCompletion(competitor);
         } else {
-            incrementGames(competitor);
             if (canWinSet(competitor)) {
                 finishCompetition(competitor);
             } else {
@@ -89,12 +90,8 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
                     .build());
             isTieBreakGameStarted = true;
         } else {
-            var currentGame = games.getLast();
-            currentGame.addPoint(competitor);
-
-            if (currentGame.isFinished()) {
-                finishCompetition(currentGame.getWinner());
-            }
+            isTieBreakGameStarted = false;
+            finishCompetition(competitor);
         }
     }
 

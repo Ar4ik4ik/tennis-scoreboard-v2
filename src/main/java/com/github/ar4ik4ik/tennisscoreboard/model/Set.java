@@ -66,9 +66,6 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
             }
         }
 
-        if (currentGame.isFinished()) {
-            incrementGames(competitor);
-        }
         if (canWinSet(competitor)) {
             this.winner = competitor;
             this.isFinished = true;

@@ -47,6 +47,7 @@ public class MatchTest {
     }
 
     @Test
+    // Инкремент поинтов после победы в сете
     void testPointsIncrementAfterSetWin() {
         var match = Match.<Player>builder()
                 .matchRule(matchRule)
@@ -57,16 +58,17 @@ public class MatchTest {
                 .secondCompetitor(playerB)
                 .build();
 
-        assertEquals(0, match.getFirstCompetitorScore());
+        assertEquals(0, match.getFirstCompetitorScore(), "Начальный счет не может быть > 0");
         winSet(match, playerA);
-        assertEquals(1, match.getFirstCompetitorScore());
-        assertFalse(match.isFinished());
+        assertEquals(1, match.getFirstCompetitorScore(), "Счет после инкремента должен быть == 1");
+        assertFalse(match.isFinished(), "Матч не может быть завершен, так как не соблюдено правило завершения");
         winSet(match, playerA);
-        assertEquals(2, match.getFirstCompetitorScore());
-        assertTrue(match.isFinished());
+        assertEquals(2, match.getFirstCompetitorScore(), "Счет должен быть == 2");
+        assertTrue(match.isFinished(), "Матч должен быть завершен, так как соблюдено правило завершения");
     }
 
     @Test
+    // Завершение после двух побед (в зависимости от Rules)
     void testMatchFinishing() {
         var match = Match.<Player>builder()
                 .matchRule(matchRule)
@@ -78,11 +80,13 @@ public class MatchTest {
                 .build();
 
         winSet(match, playerA);
-        assertFalse(match.isFinished());
+        assertFalse(match.isFinished(), "Матч не может быть завершен, так как не соблюдено правило завершения");
         winSet(match, playerB);
-        assertFalse(match.isFinished());
+        assertFalse(match.isFinished(), "Матч не может быть завершен, так как не соблюдено правило завершения");
+
         winSet(match, playerA);
-        assertTrue(match.isFinished());
+        assertTrue(match.isFinished(), "Матч должен быть завершен, так как соблюдено правило завершения");
+
     }
 
 

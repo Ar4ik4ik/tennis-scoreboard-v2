@@ -47,7 +47,14 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
                 .build());
     }
 
+    @Override
+    public void finishCompetition(T winner) {
+        this.winner = winner;
+        isFinished = true;
+    }
+
     public void addPoint(T competitor) {
+
         var currentGame = games.getLast();
         currentGame.addPoint(competitor);
 
@@ -55,10 +62,10 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
             return;
         }
 
+        incrementGames(competitor);
         if (isTieBreakMode()) {
             handleTieBreakCompletion(competitor);
         } else {
-            incrementGames(competitor);
             if (canWinSet(competitor)) {
                 finishCompetition(competitor);
             } else {
@@ -72,6 +79,22 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
         }
     }
 
+    private void handleTieBreakCompletion(T competitor) {
+        if (!isTieBreakGameStarted) {
+            startTieBreakGame();
+        } else {
+            var currentGame = games.getLast();
+            if (currentGame.isFinished()) {
+                isTieBreakGameStarted = false;
+                if (canWinSet(competitor)) {
+                    finishCompetition(competitor);
+                } else {
+                    startTieBreakGame();
+                }
+            }
+        }
+    }
+
     private void startNextGame() {
         games.add(Game.<T>builder()
                 .gameRule(this.gameRule)
@@ -80,22 +103,13 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
                 .build());
     }
 
-    private void handleTieBreakCompletion(T competitor) {
-        if (!isTieBreakGameStarted) {
-            games.add(TieBreakGame.<T>builder()
-                    .tieBreakRule(this.tieBreakRule)
-                    .firstCompetitor(this.firstCompetitor)
-                    .secondCompetitor(this.secondCompetitor)
-                    .build());
-            isTieBreakGameStarted = true;
-        } else {
-            var currentGame = games.getLast();
-            currentGame.addPoint(competitor);
-
-            if (currentGame.isFinished()) {
-                finishCompetition(currentGame.getWinner());
-            }
-        }
+    private void startTieBreakGame() {
+        games.add(TieBreakGame.<T>builder()
+                .tieBreakRule(this.tieBreakRule)
+                .firstCompetitor(this.firstCompetitor)
+                .secondCompetitor(this.secondCompetitor)
+                .build());
+        isTieBreakGameStarted = true;
     }
 
     private void incrementGames(T competitor) {
@@ -117,11 +131,5 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
 
         return scorerScore >= rules.gamesToWinSet() && scorerScore - opponentScore >= rules.winByGames();
 
-    }
-
-    @Override
-    public void finishCompetition(T winner) {
-        this.winner = winner;
-        isFinished = true;
     }
 }

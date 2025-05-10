@@ -1,5 +1,6 @@
-package com.github.ar4ik4ik.tennisscoreboard.model;
+package com.github.ar4ik4ik.tennisscoreboard.model.domain;
 
+import com.github.ar4ik4ik.tennisscoreboard.model.Competitor;
 import lombok.Builder;
 import lombok.Getter;
 

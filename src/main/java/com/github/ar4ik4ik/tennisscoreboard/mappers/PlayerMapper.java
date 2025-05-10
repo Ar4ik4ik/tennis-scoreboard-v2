@@ -6,7 +6,7 @@ import com.github.ar4ik4ik.tennisscoreboard.entity.PlayerEntity;
 
 public class PlayerMapper {
 
-    public static PlayerResponseDto fromModel(PlayerEntity player) {
+    public static PlayerResponseDto fromEntity(PlayerEntity player) {
         return PlayerResponseDto.builder()
                 .id(player.getId())
                 .name(player.getName())

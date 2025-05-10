@@ -1,5 +1,8 @@
-package com.github.ar4ik4ik.tennisscoreboard.model;
+package com.github.ar4ik4ik.tennisscoreboard.model.domain;
 
+import com.github.ar4ik4ik.tennisscoreboard.model.Competition;
+import com.github.ar4ik4ik.tennisscoreboard.model.Competitor;
+import com.github.ar4ik4ik.tennisscoreboard.model.GamePoint;
 import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.GameRule;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -4,22 +4,16 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import java.lang.reflect.Proxy;
 
 public class SessionManager {
 
     private final static SessionFactory SESSION_FACTORY = buildSessionFactory();
 
     private static SessionFactory buildSessionFactory() {
-        Configuration configuration = new Configuration();
-        configuration.configure();
-        return configuration.buildSessionFactory();
+        return new Configuration().configure().buildSessionFactory();
     }
 
     public static Session getSession() {
-        return (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(),
-                new Class[]{Session.class},
-                ((proxy, method, args) ->
-                        method.invoke(SESSION_FACTORY.getCurrentSession(), args)));
+        return SESSION_FACTORY.getCurrentSession();
     }
 }

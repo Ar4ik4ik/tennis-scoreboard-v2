@@ -1,5 +1,8 @@
 package com.github.ar4ik4ik.tennisscoreboard.model;
 
+import com.github.ar4ik4ik.tennisscoreboard.model.domain.Player;
+import com.github.ar4ik4ik.tennisscoreboard.model.domain.Set;
+import com.github.ar4ik4ik.tennisscoreboard.model.domain.TieBreakGame;
 import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.GameRule;
 import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.SetRule;
 import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.TieBreakRule;

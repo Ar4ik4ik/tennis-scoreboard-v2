@@ -1,5 +1,7 @@
 package com.github.ar4ik4ik.tennisscoreboard.model;
 
+import com.github.ar4ik4ik.tennisscoreboard.model.domain.Game;
+import com.github.ar4ik4ik.tennisscoreboard.model.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.model.rules.concreterules.ClassicGameRules;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

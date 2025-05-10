@@ -1,5 +1,7 @@
 package com.github.ar4ik4ik.tennisscoreboard.model;
 
+import com.github.ar4ik4ik.tennisscoreboard.model.domain.Match;
+import com.github.ar4ik4ik.tennisscoreboard.model.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.GameRule;
 import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.MatchRule;
 import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.SetRule;

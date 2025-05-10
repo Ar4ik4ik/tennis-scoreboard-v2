@@ -20,13 +20,13 @@ public class MatchEntity implements BaseEntity<Integer> {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "first_player_id", nullable = false)
-    private PlayerEntity firstPlayerEntityId;
+    private PlayerEntity firstPlayerEntity;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "second_player_id", nullable = false)
-    private PlayerEntity secondPlayerEntityId;
+    private PlayerEntity secondPlayerEntity;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "winner_id", nullable = false)
-    private PlayerEntity winnerId;
+    private PlayerEntity winner;
 }

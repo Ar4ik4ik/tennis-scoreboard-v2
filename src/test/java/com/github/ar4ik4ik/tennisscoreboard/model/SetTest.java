@@ -2,7 +2,6 @@ package com.github.ar4ik4ik.tennisscoreboard.model;
 
 import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.domain.Set;
-import com.github.ar4ik4ik.tennisscoreboard.domain.TieBreakGame;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRule;
@@ -98,12 +97,11 @@ class SetTest {
             winGame(set, playerB);
         }
 
-        assertTrue(set.isTieBreakGameStarted(), "При 6:6 должен включиться режим тай-брейка");
+        assertTrue(set.isInTieBreak(), "При 6:6 должен включиться режим тай-брейка");
         // Последующий вызов addPoint создаст TieBreakGame
         set.addPoint(playerA);
-        var last = set.getGames().getLast();
-        assertInstanceOf(TieBreakGame.class, last,
-                "После начала тай-брейка в списке игр должен появиться экземпляр TieBreakGame");
+        assertTrue(set.isInTieBreak());
+        assertNotNull(set.getTieBreakGame());
     }
 
     @Test
@@ -168,6 +166,6 @@ class SetTest {
         assertTrue(set.getGames().getLast().isFinished());
         assertTrue(set.isFinished());
         assertEquals(playerB, set.getWinner());
-        assertFalse(set.isTieBreakGameStarted());
+        assertFalse(set.isInTieBreak());
     }
 }

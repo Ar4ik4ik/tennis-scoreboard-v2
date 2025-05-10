@@ -7,6 +7,7 @@ import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.SetScoringStrategy;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class Set<T extends Competitor> implements Competition<T, IntScore, SetRule> {
+public class Set<T extends Competitor> implements Competition<T, Integer, SetRule> {
 
     private final SetRule rules;
     private final GameRule gameRule;
@@ -24,21 +25,25 @@ public class Set<T extends Competitor> implements Competition<T, IntScore, SetRu
 
     private Score<Integer> score = new IntScore(0, 0);
 
+    private final SetScoringStrategy<Integer> strategy;
 
-    private boolean isTieBreakGameStarted = false;
+    private boolean inTieBreak = false;
+    private TieBreakGame<T> tieBreakGame;
 
     private boolean isFinished = false;
     private T winner;
 
-    private final List<Competition<T, ?, ?>> games;
+    private final List<Game<T>> games;
 
     @Builder
-    private Set(SetRule setRule, T firstCompetitor, T secondCompetitor, GameRule gameRule, TieBreakRule tieBreakRule) {
+    private Set(SetRule setRule, T firstCompetitor, T secondCompetitor, GameRule gameRule, TieBreakRule tieBreakRule,
+                SetScoringStrategy<Integer> strategy) {
         this.rules = setRule;
         this.gameRule = gameRule;
         this.tieBreakRule = tieBreakRule;
         this.firstCompetitor = firstCompetitor;
         this.secondCompetitor = secondCompetitor;
+        this.strategy = strategy;
         this.winner = null;
         this.games = new ArrayList<>();
         this.games.add(Game.<T>builder()
@@ -49,28 +54,30 @@ public class Set<T extends Competitor> implements Competition<T, IntScore, SetRu
     }
 
     public void addPoint(T competitor) {
-        var currentGame = games.getLast();
-        currentGame.addPoint(competitor);
-
-        if (!currentGame.isFinished()) {
-            return;
+        if (isFinished) {
+            throw new IllegalStateException("Set is already finished");
         }
 
-        incrementGames(competitor);
-
-        if (isTieBreakMode()) {
-            handleTieBreakCompletion(competitor);
-        } else {
-            if (canWinSet(competitor)) {
+        if (!inTieBreak) {
+            var scoringResult = strategy.onGameWin(score, isFirst(competitor));
+            this.score = new IntScore(scoringResult.first(), scoringResult.second());
+            if (scoringResult.isFinished()) {
                 finishCompetition(competitor);
+            } else if (strategy.shouldStartTieBreak(this.score)) {
+                inTieBreak = true;
+                tieBreakGame = TieBreakGame.<T>builder()
+                        .firstCompetitor(firstCompetitor)
+                        .secondCompetitor(secondCompetitor)
+                        .tieBreakRule(tieBreakRule)
+                        .build();
             } else {
                 startNextGame();
             }
-        }
-
-        if (canWinSet(competitor)) {
-            this.winner = competitor;
-            this.isFinished = true;
+        } else {
+            tieBreakGame.addPoint(competitor);
+            if (tieBreakGame.isFinished()) {
+                finishCompetition(competitor);
+            }
         }
     }
 
@@ -82,39 +89,8 @@ public class Set<T extends Competitor> implements Competition<T, IntScore, SetRu
                 .build());
     }
 
-    private void handleTieBreakCompletion(T competitor) {
-        if (!isTieBreakGameStarted) {
-            games.add(TieBreakGame.<T>builder()
-                    .tieBreakRule(this.tieBreakRule)
-                    .firstCompetitor(this.firstCompetitor)
-                    .secondCompetitor(this.secondCompetitor)
-                    .build());
-            isTieBreakGameStarted = true;
-        } else {
-            isTieBreakGameStarted = false;
-            finishCompetition(competitor);
-        }
-    }
-
-    private void incrementGames(T competitor) {
-        score = score.increment(isFirst(competitor));
-    }
-
     private boolean isFirst(T competitor) {
         return competitor.equals(firstCompetitor);
-    }
-
-    private boolean isTieBreakMode() {
-        return score.first() >= rules.gamesToWinSet() && score.second() >= rules.gamesToWinSet()
-                && rules.useTieBreak();
-    }
-
-    private boolean canWinSet(T competitor) {
-        int scorerScore = isFirst(competitor) ? score.first() : score.second();
-        int opponentScore = isFirst(competitor) ? score.second() : score.first();
-
-        return scorerScore >= rules.gamesToWinSet() && scorerScore - opponentScore >= rules.winByGames();
-
     }
 
     @Override

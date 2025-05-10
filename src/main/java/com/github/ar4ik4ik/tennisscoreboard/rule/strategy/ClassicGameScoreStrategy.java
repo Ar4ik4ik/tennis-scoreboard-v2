@@ -3,11 +3,11 @@ package com.github.ar4ik4ik.tennisscoreboard.rule.strategy;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
 
-public class GameScoringStrategy implements ScoringStrategy<GamePoint> {
+public class ClassicGameScoreStrategy implements GameScoreStrategy<GamePoint> {
 
     private final int deuceThreshold, pointsToWin;
 
-    public GameScoringStrategy(GameRule rules) {
+    public ClassicGameScoreStrategy(GameRule rules) {
         this.deuceThreshold = rules.deuceThreshold();
         this.pointsToWin  = rules.pointsToWinGame();
     }

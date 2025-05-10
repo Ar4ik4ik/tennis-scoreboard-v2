@@ -5,7 +5,8 @@ import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GameScore;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
-import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoringStrategy;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ClassicGameScoreStrategy;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoreStrategy;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     @Getter(AccessLevel.PUBLIC)
     private final GameRule rules;
 
-    private final GameScoringStrategy strategy;
+    private final GameScoreStrategy<GamePoint> strategy;
 
     private final T firstCompetitor, secondCompetitor;
 
@@ -34,7 +35,7 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     private T winner = null;
 
     @Builder
-    private Game(GameRule gameRule, T firstCompetitor, T secondCompetitor, GameScoringStrategy strategy) {
+    private Game(GameRule gameRule, T firstCompetitor, T secondCompetitor, ClassicGameScoreStrategy strategy) {
         this.rules = gameRule;
         this.firstCompetitor = firstCompetitor;
         this.secondCompetitor = secondCompetitor;

@@ -1,11 +1,12 @@
 package com.github.ar4ik4ik.tennisscoreboard.service;
 
-import com.github.ar4ik4ik.tennisscoreboard.dto.PlayerRequestDto;
-import com.github.ar4ik4ik.tennisscoreboard.dto.PlayerResponseDto;
 import com.github.ar4ik4ik.tennisscoreboard.exceptions.PlayerNotFoundException;
-import com.github.ar4ik4ik.tennisscoreboard.repository.PlayerRepository;
-import static com.github.ar4ik4ik.tennisscoreboard.mappers.PlayerMapper.fromRequestDto;
-import static com.github.ar4ik4ik.tennisscoreboard.mappers.PlayerMapper.fromEntity;
+import com.github.ar4ik4ik.tennisscoreboard.model.dto.PlayerRequestDto;
+import com.github.ar4ik4ik.tennisscoreboard.model.dto.PlayerResponseDto;
+import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.PlayerRepository;
+
+import static com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerMapper.fromEntity;
+import static com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerMapper.fromRequestDto;
 
 public class PlayerManagerService {
 

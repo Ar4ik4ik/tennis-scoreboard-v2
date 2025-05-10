@@ -1,9 +1,9 @@
 package com.github.ar4ik4ik.tennisscoreboard.service;
 
-import com.github.ar4ik4ik.tennisscoreboard.dto.OngoingMatchResponseDto;
-import com.github.ar4ik4ik.tennisscoreboard.dto.ScoreIncreaseDto;
 import com.github.ar4ik4ik.tennisscoreboard.exceptions.MatchNotFoundException;
-import com.github.ar4ik4ik.tennisscoreboard.mappers.MatchMapper;
+import com.github.ar4ik4ik.tennisscoreboard.model.dto.OngoingMatchResponseDto;
+import com.github.ar4ik4ik.tennisscoreboard.model.dto.ScoreIncreaseDto;
+import com.github.ar4ik4ik.tennisscoreboard.util.mappers.MatchMapper;
 
 public class MatchScoreCalculationService {
 

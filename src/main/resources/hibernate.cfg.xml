@@ -26,7 +26,7 @@
         <property name="hibernate.generate_statistics">true</property>
 
         <!-- Маппинги -->
-        <mapping class="com.github.ar4ik4ik.tennisscoreboard.entity.PlayerEntity"/>
-        <mapping class="com.github.ar4ik4ik.tennisscoreboard.entity.MatchEntity"/>
+        <mapping class="com.github.ar4ik4ik.tennisscoreboard.persistence.entity.PlayerEntity"/>
+        <mapping class="com.github.ar4ik4ik.tennisscoreboard.persistence.entity.MatchEntity"/>
     </session-factory>
 </hibernate-configuration>

@@ -1,14 +1,14 @@
 package com.github.ar4ik4ik.tennisscoreboard.model;
 
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Player;
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Set;
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.TieBreakGame;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.GameRule;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.SetRule;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.TieBreakRule;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.concreterules.ClassicGameRules;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.concreterules.ClassicSetRules;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.concreterules.ClassicTieBreakRules;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Set;
+import com.github.ar4ik4ik.tennisscoreboard.domain.TieBreakGame;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicGameRules;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicSetRules;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicTieBreakRules;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -59,8 +59,8 @@ class SetTest {
         }
 
         assertFalse(set.isFinished(), "Сет не должен быть завершён при 5:0");
-        assertEquals(5, set.getFirstCompetitorScore(), "Счёт по первым геймам у A должен быть 5");
-        assertEquals(0, set.getSecondCompetitorScore(), "Счёт у B должен оставаться 0");
+        assertEquals(5, set.getScore().first(), "Счёт по первым геймам у A должен быть 5");
+        assertEquals(0, set.getScore().second(), "Счёт у B должен оставаться 0");
     }
 
     @Test
@@ -128,11 +128,11 @@ class SetTest {
         set.addPoint(playerA);
         assertFalse(set.isFinished());
         assertNull(set.getWinner());
-        assertEquals(6, set.getFirstCompetitorScore());
+        assertEquals(6, set.getScore().first());
         set.addPoint(playerA);
         assertTrue(set.isFinished());
         assertEquals(set.getFirstCompetitor(), set.getWinner());
-        assertEquals(7, set.getFirstCompetitorScore());
+        assertEquals(7, set.getScore().first());
     }
 
     @Test

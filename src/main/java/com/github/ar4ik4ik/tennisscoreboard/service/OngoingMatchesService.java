@@ -1,12 +1,11 @@
 package com.github.ar4ik4ik.tennisscoreboard.service;
 
-import com.github.ar4ik4ik.tennisscoreboard.dto.MatchRequestDto;
-import com.github.ar4ik4ik.tennisscoreboard.mappers.PlayerEntityMapper;
-import com.github.ar4ik4ik.tennisscoreboard.mappers.PlayerMapper;
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Match;
-
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Player;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Match;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
+import com.github.ar4ik4ik.tennisscoreboard.model.dto.MatchRequestDto;
 import com.github.ar4ik4ik.tennisscoreboard.util.MatchFactory;
+import com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerEntityMapper;
+import com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

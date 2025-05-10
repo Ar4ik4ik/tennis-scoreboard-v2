@@ -1,15 +1,15 @@
 package com.github.ar4ik4ik.tennisscoreboard.model;
 
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Match;
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Player;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.GameRule;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.MatchRule;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.SetRule;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.TieBreakRule;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.concreterules.ClassicGameRules;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.concreterules.ClassicMatchRules;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.concreterules.ClassicSetRules;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.concreterules.ClassicTieBreakRules;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Match;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.MatchRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicGameRules;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicMatchRules;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicSetRules;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicTieBreakRules;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,12 +60,12 @@ public class MatchTest {
                 .secondCompetitor(playerB)
                 .build();
 
-        assertEquals(0, match.getFirstCompetitorScore(), "Начальный счет не может быть > 0");
+        assertEquals(0, match.getScore().first(), "Начальный счет не может быть > 0");
         winSet(match, playerA);
-        assertEquals(1, match.getFirstCompetitorScore(), "Счет после инкремента должен быть == 1");
+        assertEquals(1, match.getScore().first(), "Счет после инкремента должен быть == 1");
         assertFalse(match.isFinished(), "Матч не может быть завершен, так как не соблюдено правило завершения");
         winSet(match, playerA);
-        assertEquals(2, match.getFirstCompetitorScore(), "Счет должен быть == 2");
+        assertEquals(2, match.getScore().first(), "Счет должен быть == 2");
         assertTrue(match.isFinished(), "Матч должен быть завершен, так как соблюдено правило завершения");
     }
 

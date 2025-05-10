@@ -1,8 +1,8 @@
 package com.github.ar4ik4ik.tennisscoreboard.model;
 
-import com.github.ar4ik4ik.tennisscoreboard.dto.MatchRequestDto;
-import com.github.ar4ik4ik.tennisscoreboard.dto.PlayerRequestDto;
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Player;
+import com.github.ar4ik4ik.tennisscoreboard.model.dto.MatchRequestDto;
+import com.github.ar4ik4ik.tennisscoreboard.model.dto.PlayerRequestDto;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.service.OngoingMatchesService;
 import com.github.ar4ik4ik.tennisscoreboard.util.SessionManager;
 import org.junit.jupiter.api.BeforeEach;

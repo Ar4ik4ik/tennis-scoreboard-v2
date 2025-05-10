@@ -1,5 +1,6 @@
 package com.github.ar4ik4ik.tennisscoreboard.rule.strategy;
 
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.IntScore;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
 
@@ -17,16 +18,16 @@ public class ClassicSetScoringStrategy implements SetScoringStrategy<Integer> {
 
 
     @Override
-    public ScoringResult<Integer> onGameWin(Score<Integer> previousScore, boolean isFirstPlayerWon) {
+    public ScoringResult<Score<Integer>> onGameWin(Score<Integer> previousScore, boolean isFirstPlayerWon) {
 
         var newSetScore = isFirstPlayerWon ? previousScore.incrementFirst()
                 : previousScore.incrementSecond();
 
         if (canWinSet(newSetScore, isFirstPlayerWon)) {
-            return new ScoringResult<>(newSetScore.first(), newSetScore.second(), true);
+            return new ScoringResult<>(newSetScore, true);
         }
 
-        return new ScoringResult<>(newSetScore.first(), newSetScore.second(), false);
+        return new ScoringResult<>(newSetScore, false);
     }
 
     @Override

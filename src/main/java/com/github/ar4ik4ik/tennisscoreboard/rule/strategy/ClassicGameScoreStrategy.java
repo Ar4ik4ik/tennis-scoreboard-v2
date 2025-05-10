@@ -1,6 +1,8 @@
 package com.github.ar4ik4ik.tennisscoreboard.rule.strategy;
 
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GameScore;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
 
 public class ClassicGameScoreStrategy implements GameScoreStrategy<GamePoint> {
@@ -13,19 +15,26 @@ public class ClassicGameScoreStrategy implements GameScoreStrategy<GamePoint> {
     }
 
     @Override
-    public ScoringResult<GamePoint> onPoint(GamePoint firstScore, GamePoint secondScore, boolean isFirst) {
+    public ScoringResult<Score<GamePoint>> onPoint(Score<GamePoint> score, boolean isFirst) {
 
-        if (!isDeuce(firstScore, secondScore) && canWinWithoutDeuce(firstScore, secondScore, isFirst)) {
-            return new ScoringResult<>(firstScore, secondScore, true);
+        var firstScore = score.first();
+        var secondScore = score.second();
+
+        if (!isDeuce(score) && canWinWithoutDeuce(firstScore, secondScore, isFirst)) {
+            return new ScoringResult<>(new GameScore(firstScore, secondScore), true);
         }
 
         var newFirstScore = isFirst ? firstScore.getNextPoint() : firstScore;
         var newSecondScore = isFirst ? secondScore : secondScore.getNextPoint();
 
-        return new ScoringResult<>(newFirstScore, newSecondScore, false);
+        return new ScoringResult<>(new GameScore(newFirstScore, newSecondScore), false);
     }
 
-    public boolean isDeuce(GamePoint firstScore, GamePoint secondScore) {
+    @Override
+    public boolean isDeuce(Score<GamePoint> score) {
+        var firstScore = score.first();
+        var secondScore = score.second();
+
         return firstScore.getValue() >= deuceThreshold &&
                 secondScore.getValue() >= deuceThreshold &&
                 firstScore.getValue() == secondScore.getValue();

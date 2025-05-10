@@ -104,9 +104,9 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
         return competitor.equals(firstCompetitor);
     }
 
-    private ScoringResult<Integer> refreshScore(T competitor) {
+    private ScoringResult<Score<Integer>> refreshScore(T competitor) {
         var scoringResult = strategy.onGameWin(score, isFirst(competitor));
-        this.score = new IntScore(scoringResult.first(), scoringResult.second());
+        this.score = scoringResult.score();
         return scoringResult;
     }
 

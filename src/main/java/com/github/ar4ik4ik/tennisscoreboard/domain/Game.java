@@ -55,9 +55,9 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
         }
         boolean isFirst = competitor.equals(firstCompetitor);
 
-        if (!strategy.isDeuce(score.first(), score.second())) {
-            var scoringResult = strategy.onPoint(score.first(), score.second(), isFirst);
-            this.score = new GameScore(scoringResult.first(), scoringResult.second());
+        if (!strategy.isDeuce(score)) {
+            var scoringResult = strategy.onPoint(score, isFirst);
+            this.score = scoringResult.score();
 
             if (scoringResult.isFinished()) {
                 finishCompetition(competitor);

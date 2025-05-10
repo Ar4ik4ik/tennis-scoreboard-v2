@@ -35,7 +35,7 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     private T winner = null;
 
     @Builder
-    private Game(GameRule gameRule, T firstCompetitor, T secondCompetitor, ClassicGameScoreStrategy strategy) {
+    private Game(GameRule gameRule, T firstCompetitor, T secondCompetitor, GameScoreStrategy<GamePoint> strategy) {
         this.rules = gameRule;
         this.firstCompetitor = firstCompetitor;
         this.secondCompetitor = secondCompetitor;
@@ -55,18 +55,16 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
         }
         boolean isFirst = competitor.equals(firstCompetitor);
 
-        var scoringResult = strategy.onPoint(score.first(), score.second(), isFirst);
-        this.score = new GameScore(scoringResult.first(), scoringResult.second());
+        if (!strategy.isDeuce(score.first(), score.second())) {
+            var scoringResult = strategy.onPoint(score.first(), score.second(), isFirst);
+            this.score = new GameScore(scoringResult.first(), scoringResult.second());
 
-        if (scoringResult.isFinished()) {
-            finishCompetition(competitor);
-            return;
-        }
-
-        if (strategy.isDeuce(score.first(), score.second())) {
+            if (scoringResult.isFinished()) {
+                finishCompetition(competitor);
+            }
+        } else {
             handleAdvantage(competitor);
         }
-
     }
 
     private void handleAdvantage(T competitor) {

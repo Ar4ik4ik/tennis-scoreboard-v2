@@ -8,6 +8,7 @@ import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.MatchRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRule;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class Match<T extends Competitor> implements Competition<T, IntScore, MatchRule> {
+public class Match<T extends Competitor> implements Competition<T, Integer, MatchRule> {
 
     private final MatchRule rules;
     private final SetRule setRule;
@@ -24,6 +25,7 @@ public class Match<T extends Competitor> implements Competition<T, IntScore, Mat
 
     private final T firstCompetitor, secondCompetitor;
 
+    @Getter(AccessLevel.PUBLIC)
     private Score<Integer> score = new IntScore(0, 0);
 
     private boolean isFinished = false;

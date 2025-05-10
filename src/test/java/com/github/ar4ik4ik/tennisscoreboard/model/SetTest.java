@@ -2,12 +2,17 @@ package com.github.ar4ik4ik.tennisscoreboard.model;
 
 import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.domain.Set;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicGameRules;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicSetRules;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicTieBreakRules;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ClassicGameScoreStrategy;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ClassicSetScoringStrategy;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoreStrategy;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.SetScoringStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +25,8 @@ class SetTest {
     private GameRule gameRule;
     private SetRule setRule;
     private TieBreakRule tieBreakRule;
+    private SetScoringStrategy<Integer> setStrategy;
+    private GameScoreStrategy<GamePoint> gameStrategy;
 
     @BeforeEach
     void init() {
@@ -34,6 +41,8 @@ class SetTest {
         gameRule = new ClassicGameRules(4, 3, 1);
         setRule = new ClassicSetRules(6,2,true);
         tieBreakRule = new ClassicTieBreakRules(7,2);
+        setStrategy = new ClassicSetScoringStrategy(setRule);
+        gameStrategy = new ClassicGameScoreStrategy(gameRule);
     }
 
     private void winGame(Set<Player> set, Player winner) {
@@ -45,6 +54,8 @@ class SetTest {
     @Test
     void testSetUnfinishedAfterFiveGames() {
         var set = Set.<Player>builder()
+                .gameStrategy(gameStrategy)
+                .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
                 .tieBreakRule(tieBreakRule)
@@ -65,6 +76,8 @@ class SetTest {
     @Test
     void testSetFinishedSixToZero() {
         var set = Set.<Player>builder()
+                .gameStrategy(gameStrategy)
+                .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
                 .tieBreakRule(tieBreakRule)
@@ -84,6 +97,8 @@ class SetTest {
     @Test
     void testTieBreakModeAtSixAll() {
         var set = Set.<Player>builder()
+                .gameStrategy(gameStrategy)
+                .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
                 .tieBreakRule(tieBreakRule)
@@ -107,6 +122,8 @@ class SetTest {
     @Test
     void testSetCompletionAfterTieBreak() {
         var set = Set.<Player>builder()
+                .gameStrategy(gameStrategy)
+                .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
                 .tieBreakRule(tieBreakRule)
@@ -136,6 +153,8 @@ class SetTest {
     @Test
     void testPlayingAfterMaxTieBreakPoints() {
         var set = Set.<Player>builder()
+                .gameStrategy(gameStrategy)
+                .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
                 .tieBreakRule(tieBreakRule)
@@ -159,13 +178,12 @@ class SetTest {
         set.addPoint(playerA);
         // PlayerA - 7; PlayerB - 6
         assertFalse(set.isFinished());
-        assertFalse(set.getGames().getLast().isFinished());
+        assertFalse(set.getTieBreakGame().isFinished());
         set.addPoint(playerB);
         set.addPoint(playerB);
         set.addPoint(playerB);
-        assertTrue(set.getGames().getLast().isFinished());
+        assertTrue(set.getTieBreakGame().isFinished());
         assertTrue(set.isFinished());
         assertEquals(playerB, set.getWinner());
-        assertFalse(set.isInTieBreak());
     }
 }

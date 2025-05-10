@@ -3,6 +3,7 @@ package com.github.ar4ik4ik.tennisscoreboard.model;
 import com.github.ar4ik4ik.tennisscoreboard.domain.Game;
 import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicGameRules;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ClassicGameScoreStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -23,11 +24,13 @@ public class GameTest {
                 .build();
 
         var rules = new ClassicGameRules(4, 3, 1);
+        var strategy = new ClassicGameScoreStrategy(rules);
 
         return Game.<Player>builder()
                 .gameRule(rules)
                 .firstCompetitor(firstPlayer)
                 .secondCompetitor(secondPlayer)
+                .strategy(strategy)
                 .build();
     }
 
@@ -78,7 +81,7 @@ public class GameTest {
 
         Assertions.assertEquals(ZERO, game.getScore().first());
         game.addPoint(game.getFirstCompetitor());
-        Assertions.assertEquals(FIFTEEN, game.getScore().second());
+        Assertions.assertEquals(FIFTEEN, game.getScore().first());
     }
 
     @Test

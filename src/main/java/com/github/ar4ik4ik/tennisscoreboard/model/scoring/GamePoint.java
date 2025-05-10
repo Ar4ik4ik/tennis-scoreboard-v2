@@ -1,4 +1,4 @@
-package com.github.ar4ik4ik.tennisscoreboard.model;
+package com.github.ar4ik4ik.tennisscoreboard.model.scoring;
 
 import lombok.Getter;
 

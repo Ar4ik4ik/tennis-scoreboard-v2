@@ -2,8 +2,8 @@ package com.github.ar4ik4ik.tennisscoreboard.domain;
 
 import com.github.ar4ik4ik.tennisscoreboard.model.Competition;
 import com.github.ar4ik4ik.tennisscoreboard.model.Competitor;
-import com.github.ar4ik4ik.tennisscoreboard.model.IntScore;
-import com.github.ar4ik4ik.tennisscoreboard.model.Score;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.IntScore;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRule;

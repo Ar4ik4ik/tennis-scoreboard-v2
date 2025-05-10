@@ -6,8 +6,8 @@ import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicGam
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static com.github.ar4ik4ik.tennisscoreboard.model.GamePoint.FIFTEEN;
-import static com.github.ar4ik4ik.tennisscoreboard.model.GamePoint.ZERO;
+import static com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint.FIFTEEN;
+import static com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint.ZERO;
 
 public class GameTest {
 

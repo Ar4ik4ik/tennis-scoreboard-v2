@@ -1,7 +1,11 @@
 package com.github.ar4ik4ik.tennisscoreboard.domain;
 
 import com.github.ar4ik4ik.tennisscoreboard.model.*;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GameScore;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoringStrategy;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +16,8 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
 
     @Getter(AccessLevel.PUBLIC)
     private final GameRule rules;
+
+    private final GameScoringStrategy strategy;
 
     private final T firstCompetitor, secondCompetitor;
 
@@ -28,16 +34,38 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     private T winner = null;
 
     @Builder
-    private Game(GameRule gameRule, T firstCompetitor, T secondCompetitor) {
+    private Game(GameRule gameRule, T firstCompetitor, T secondCompetitor, GameScoringStrategy strategy) {
         this.rules = gameRule;
         this.firstCompetitor = firstCompetitor;
         this.secondCompetitor = secondCompetitor;
+        this.strategy = strategy;
     }
 
     @Override
     public void finishCompetition(T winner) {
         this.winner = winner;
         isFinished = true;
+    }
+
+    public void addPoint(T competitor) {
+
+        if (isFinished) {
+            throw new IllegalStateException("Game is already finished");
+        }
+        boolean isFirst = competitor.equals(firstCompetitor);
+
+        var scoringResult = strategy.onPoint(score.first(), score.second(), isFirst);
+        this.score = new GameScore(scoringResult.first(), scoringResult.second());
+
+        if (scoringResult.isFinished()) {
+            finishCompetition(competitor);
+            return;
+        }
+
+        if (strategy.isDeuce(score.first(), score.second())) {
+            handleAdvantage(competitor);
+        }
+
     }
 
     private void handleAdvantage(T competitor) {
@@ -54,44 +82,8 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
         } else {
             advantageScoreCounter--;
             if (advantageScoreCounter == 0) {
-                setCurrentAdvantageCompetitor(null);
+                currentAdvantageCompetitor = null;
             }
         }
-    }
-
-    private boolean isDeuce() {
-        var firstCompetitorScore = score.first().getValue();
-        var secondCompetitorScore = score.second().getValue();
-
-        return firstCompetitorScore >= rules.deuceThreshold() &&
-                secondCompetitorScore >= rules.deuceThreshold() &&
-                firstCompetitorScore == secondCompetitorScore;
-    }
-
-    public void addPoint(T competitor) {
-
-        GamePoint scorerScore = isFirst(competitor) ? score.first() : score.second();
-        GamePoint opponentScore = isFirst(competitor) ? score.second() : score.first();
-
-        if (isDeuce()) {
-            handleAdvantage(competitor);
-        } else if (canWinWithoutDeuce(scorerScore, opponentScore)) {
-            finishCompetition(competitor);
-        } else {
-            incrementPoint(competitor);
-        }
-    }
-
-    private boolean canWinWithoutDeuce(GamePoint currentScore, GamePoint otherScore) {
-        return currentScore.getValue() + 1 >= rules.pointsToWinGame() &&
-                otherScore.getValue() < rules.pointsToWinGame();
-    }
-
-    private boolean isFirst(T competitor) {
-        return competitor.equals(firstCompetitor);
-    }
-
-    private void incrementPoint(T competitor) {
-        score = score.increment(isFirst(competitor));
     }
 }

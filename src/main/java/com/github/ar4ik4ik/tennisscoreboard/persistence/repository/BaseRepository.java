@@ -12,7 +12,7 @@ import java.util.Optional;
 public class BaseRepository<K extends Serializable, E extends BaseEntity<K>>
         implements Repository<K, E> {
 
-    private final Class<E> clazz;
+    protected final Class<E> clazz;
 
     @Override
     public E save(E entity) {
@@ -21,39 +21,9 @@ public class BaseRepository<K extends Serializable, E extends BaseEntity<K>>
         return entity;
     }
 
-    @Override
-    public void delete(K id) {
-        var entityManager = SessionManager.getSession();
-        var foundedEntity = findById(id);
-        if (foundedEntity.isPresent()) {
-            entityManager.remove(foundedEntity);
-        } else {
-            throw new RuntimeException();
-        }
-    }
-
     public Optional<E> findById(K id) {
         var entityManager = SessionManager.getSession();
         return Optional.of(entityManager.find(clazz, id));
-    }
-
-    @Override
-    public E update(E entity) {
-        var entityManager = SessionManager.getSession();
-        return entityManager.merge(entity);
-    }
-
-    @Override
-    public List<E> findByField(String field, Object value) {
-        var entityManager = SessionManager.getSession();
-        var criteriaBuilder = entityManager.getCriteriaBuilder();
-        var criteriaQuery = criteriaBuilder.createQuery(clazz);
-        var root = criteriaQuery.from(clazz);
-
-        criteriaQuery.select(root)
-                .where(criteriaBuilder.equal(root.get(field), value));
-
-        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
@@ -62,5 +32,4 @@ public class BaseRepository<K extends Serializable, E extends BaseEntity<K>>
         var criteria = entityManager.getCriteriaBuilder().createQuery(clazz);
         return entityManager.createQuery(criteria).getResultList();
     }
-    
 }

@@ -9,10 +9,7 @@ import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRu
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicGameRules;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicSetRules;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicTieBreakRules;
-import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ClassicGameScoreStrategy;
-import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ClassicSetScoringStrategy;
-import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoreStrategy;
-import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.SetScoringStrategy;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +24,7 @@ class SetTest {
     private TieBreakRule tieBreakRule;
     private SetScoringStrategy<Integer> setStrategy;
     private GameScoreStrategy<GamePoint> gameStrategy;
+    private ScoringStrategy<Integer> tieBreakStrategy;
 
     @BeforeEach
     void init() {
@@ -43,6 +41,7 @@ class SetTest {
         tieBreakRule = new ClassicTieBreakRules(7,2);
         setStrategy = new ClassicSetScoringStrategy(setRule);
         gameStrategy = new ClassicGameScoreStrategy(gameRule);
+        tieBreakStrategy = new TieBreakScoringStrategy(tieBreakRule);
     }
 
     private void winGame(Set<Player> set, Player winner) {
@@ -55,6 +54,7 @@ class SetTest {
     void testSetUnfinishedAfterFiveGames() {
         var set = Set.<Player>builder()
                 .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
                 .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
@@ -77,6 +77,7 @@ class SetTest {
     void testSetFinishedSixToZero() {
         var set = Set.<Player>builder()
                 .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
                 .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
@@ -98,6 +99,7 @@ class SetTest {
     void testTieBreakModeAtSixAll() {
         var set = Set.<Player>builder()
                 .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
                 .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
@@ -123,6 +125,7 @@ class SetTest {
     void testSetCompletionAfterTieBreak() {
         var set = Set.<Player>builder()
                 .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
                 .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
@@ -154,6 +157,7 @@ class SetTest {
     void testPlayingAfterMaxTieBreakPoints() {
         var set = Set.<Player>builder()
                 .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
                 .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)

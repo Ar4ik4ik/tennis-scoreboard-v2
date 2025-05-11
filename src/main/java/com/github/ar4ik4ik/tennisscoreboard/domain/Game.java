@@ -1,11 +1,11 @@
 package com.github.ar4ik4ik.tennisscoreboard.domain;
 
-import com.github.ar4ik4ik.tennisscoreboard.model.*;
+import com.github.ar4ik4ik.tennisscoreboard.model.Competition;
+import com.github.ar4ik4ik.tennisscoreboard.model.Competitor;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GameScore;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
-import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ClassicGameScoreStrategy;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoreStrategy;
 import lombok.AccessLevel;
 import lombok.Builder;

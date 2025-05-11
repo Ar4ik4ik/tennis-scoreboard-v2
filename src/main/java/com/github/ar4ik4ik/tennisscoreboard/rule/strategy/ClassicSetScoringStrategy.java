@@ -1,6 +1,5 @@
 package com.github.ar4ik4ik.tennisscoreboard.rule.strategy;
 
-import com.github.ar4ik4ik.tennisscoreboard.model.scoring.IntScore;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
 

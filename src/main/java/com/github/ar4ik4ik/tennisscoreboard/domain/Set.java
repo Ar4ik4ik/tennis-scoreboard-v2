@@ -10,6 +10,7 @@ import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoreStrategy;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ScoringResult;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ScoringStrategy;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.SetScoringStrategy;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
 
     private final SetScoringStrategy<Integer> strategy;
     private final GameScoreStrategy<GamePoint> gameStrategy;
+    private final ScoringStrategy<Integer> tieBreakStrategy;
 
     private boolean inTieBreak = false;
     private TieBreakGame<T> tieBreakGame;
@@ -41,7 +43,7 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
 
     @Builder
     private Set(SetRule setRule, T firstCompetitor, T secondCompetitor, GameRule gameRule, TieBreakRule tieBreakRule,
-                SetScoringStrategy<Integer> strategy, GameScoreStrategy<GamePoint> gameStrategy) {
+                SetScoringStrategy<Integer> strategy, GameScoreStrategy<GamePoint> gameStrategy, ScoringStrategy<Integer> tieBreakStrategy) {
         this.rules = setRule;
         this.gameRule = gameRule;
         this.tieBreakRule = tieBreakRule;
@@ -49,6 +51,7 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
         this.secondCompetitor = secondCompetitor;
         this.gameStrategy = gameStrategy;
         this.strategy = strategy;
+        this.tieBreakStrategy = tieBreakStrategy;
         this.winner = null;
         this.games = new ArrayList<>();
         this.games.add(Game.<T>builder()
@@ -77,6 +80,7 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
                             .firstCompetitor(firstCompetitor)
                             .secondCompetitor(secondCompetitor)
                             .tieBreakRule(tieBreakRule)
+                            .strategy(tieBreakStrategy)
                             .build();
                 } else {
                     startNextGame();
@@ -92,8 +96,8 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
     }
 
     private void startNextGame() {
-        games.add(Game.<T>builder()
-                .gameRule(this.gameRule)
+        this.games.add(Game.<T>builder()
+                .gameRule(gameRule)
                 .firstCompetitor(firstCompetitor)
                 .secondCompetitor(secondCompetitor)
                 .strategy(gameStrategy)

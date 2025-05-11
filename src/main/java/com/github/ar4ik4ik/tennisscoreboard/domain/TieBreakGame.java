@@ -5,6 +5,8 @@ import com.github.ar4ik4ik.tennisscoreboard.model.Competitor;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.IntScore;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ScoringStrategy;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +19,8 @@ public class TieBreakGame<T extends Competitor> implements Competition<T, Intege
 
     private final T firstCompetitor, secondCompetitor;
 
+    private final ScoringStrategy<Integer> strategy;
+
     private Score<Integer> score = new IntScore(0, 0);
 
     @Getter(AccessLevel.PUBLIC)
@@ -25,10 +29,11 @@ public class TieBreakGame<T extends Competitor> implements Competition<T, Intege
     private T winner = null;
 
     @Builder
-    private TieBreakGame(TieBreakRule tieBreakRule, T firstCompetitor, T secondCompetitor) {
+    private TieBreakGame(TieBreakRule tieBreakRule, T firstCompetitor, T secondCompetitor, ScoringStrategy<Integer> strategy) {
         this.rules = tieBreakRule;
         this.firstCompetitor = firstCompetitor;
         this.secondCompetitor = secondCompetitor;
+        this.strategy = strategy;
     }
 
     @Override
@@ -38,25 +43,20 @@ public class TieBreakGame<T extends Competitor> implements Competition<T, Intege
     }
 
     public void addPoint(T competitor) {
-        incrementPoint(competitor);
 
-        if (canWin(competitor)) {
+        if (isFinished) {
+            throw new IllegalStateException("Tie-Break already finished");
+        }
+
+        var scoreResult = strategy.onPoint(score, isFirst(competitor));
+        score = scoreResult.score();
+        if (scoreResult.isFinished()) {
             finishCompetition(competitor);
         }
-    }
-
-    private boolean canWin(T competitor) {
-        int scorerScore = isFirst(competitor) ? score.first() : score.second();
-        int opponentScore = isFirst(competitor) ? score.second() : score.first();
-
-        return scorerScore >= rules.winBy() && (scorerScore - opponentScore) >= rules.pointsToWin();
     }
 
     private boolean isFirst(T competitor) {
         return competitor.equals(firstCompetitor);
     }
 
-    private void incrementPoint(T competitor) {
-        score = score.increment(isFirst(competitor));
-    }
 }

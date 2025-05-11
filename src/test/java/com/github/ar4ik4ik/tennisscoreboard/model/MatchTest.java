@@ -77,10 +77,10 @@ public class MatchTest {
         assertEquals(0, match.getScore().first(), "Начальный счет не может быть > 0");
         winSet(match, playerA);
         assertEquals(1, match.getScore().first(), "Счет после инкремента должен быть == 1");
-        assertFalse(match.isFinished(), "Матч не может быть завершен, так как не соблюдено правило завершения");
+        assertEquals(State.PLAYING, match.getState(), "Матч не может быть завершен, так как не соблюдено правило завершения");
         winSet(match, playerA);
         assertEquals(2, match.getScore().first(), "Счет должен быть == 2");
-        assertTrue(match.isFinished(), "Матч должен быть завершен, так как соблюдено правило завершения");
+        assertEquals(State.FINISHED, match.getState(), "Матч должен быть завершен, так как соблюдено правило завершения");
     }
 
     @Test
@@ -100,12 +100,12 @@ public class MatchTest {
                 .build();
 
         winSet(match, playerA);
-        assertFalse(match.isFinished(), "Матч не может быть завершен, так как не соблюдено правило завершения");
+        assertEquals(State.PLAYING, match.getState(), "Матч не может быть завершен, так как не соблюдено правило завершения");
         winSet(match, playerB);
-        assertFalse(match.isFinished(), "Матч не может быть завершен, так как не соблюдено правило завершения");
+        assertEquals(State.PLAYING, match.getState(), "Матч не может быть завершен, так как не соблюдено правило завершения");
 
         winSet(match, playerA);
-        assertTrue(match.isFinished(), "Матч должен быть завершен, так как соблюдено правило завершения");
+        assertEquals(State.FINISHED, match.getState(), "Матч должен быть завершен, так как соблюдено правило завершения");
 
     }
 

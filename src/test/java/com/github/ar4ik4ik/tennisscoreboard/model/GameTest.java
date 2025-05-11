@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint.FIFTEEN;
 import static com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint.ZERO;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameTest {
 
@@ -59,7 +60,7 @@ public class GameTest {
         Assertions.assertEquals(ZERO, game.getScore().second());
         Assertions.assertNull(game.getWinner());
         Assertions.assertEquals(rules,game.getRules());
-        Assertions.assertFalse(game.isFinished());
+        assertEquals(State.PLAYING, game.getState());
         Assertions.assertEquals(0, game.getAdvantageScoreCounter());
         Assertions.assertNull(game.getCurrentAdvantageCompetitor());
     }
@@ -67,12 +68,12 @@ public class GameTest {
     @Test
     public void finishGameTest() {
         var game = initGame();
-        Assertions.assertFalse(game.isFinished());
+        assertEquals(State.PLAYING, game.getState());
 
         game.finishCompetition(game.getFirstCompetitor());
 
         Assertions.assertEquals(game.getFirstCompetitor(), game.getWinner());
-        Assertions.assertTrue(game.isFinished());
+        assertEquals(State.FINISHED, game.getState());
     }
 
     @Test
@@ -97,22 +98,22 @@ public class GameTest {
         Assertions.assertNull(game.getCurrentAdvantageCompetitor());
         game.addPoint(game.getFirstCompetitor());
         Assertions.assertEquals(game.getFirstCompetitor(), game.getCurrentAdvantageCompetitor());
-        Assertions.assertFalse(game.isFinished());
+        assertEquals(State.PLAYING, game.getState());
     }
 
     @Test
     public void winWithoutDeuceTest() {
         var game = initGame();
-        Assertions.assertFalse(game.isFinished());
+        assertEquals(State.PLAYING, game.getState());
         for (int i = 0; i < 2; i++) {
             game.addPoint(game.getFirstCompetitor());
             game.addPoint(game.getSecondCompetitor());
         }
-        Assertions.assertFalse(game.isFinished());
+        assertEquals(State.PLAYING, game.getState());
         game.addPoint(game.getFirstCompetitor());
-        Assertions.assertFalse(game.isFinished());
+        assertEquals(State.PLAYING, game.getState());
         game.addPoint(game.getFirstCompetitor());
-        Assertions.assertTrue(game.isFinished());
+        assertEquals(State.FINISHED, game.getState());
         Assertions.assertEquals(game.getFirstCompetitor(), game.getWinner());
     }
 
@@ -138,6 +139,6 @@ public class GameTest {
         game.addPoint(game.getSecondCompetitor());
         Assertions.assertEquals(2, game.getAdvantageScoreCounter());
         Assertions.assertEquals(game.getSecondCompetitor(), game.getCurrentAdvantageCompetitor());
-        Assertions.assertTrue(game.isFinished());
+        assertEquals(State.FINISHED, game.getState());
     }
 }

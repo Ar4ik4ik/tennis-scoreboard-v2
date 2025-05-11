@@ -68,7 +68,7 @@ class SetTest {
             winGame(set, playerA);
         }
 
-        assertFalse(set.isFinished(), "Сет не должен быть завершён при 5:0");
+        assertEquals(State.PLAYING, set.getState(), "Сет не должен быть завершён при 5:0");
         assertEquals(5, set.getScore().first(), "Счёт по первым геймам у A должен быть 5");
         assertEquals(0, set.getScore().second(), "Счёт у B должен оставаться 0");
     }
@@ -91,7 +91,7 @@ class SetTest {
             winGame(set, playerA);
         }
 
-        assertTrue(set.isFinished(), "Сет должен завершиться при 6:0");
+        assertEquals(State.FINISHED, set.getState(), "Сет должен завершиться при 6:0");
         assertEquals(playerA, set.getWinner(), "Победителем сета должен стать A");
     }
 
@@ -114,10 +114,10 @@ class SetTest {
             winGame(set, playerB);
         }
 
-        assertTrue(set.isInTieBreak(), "При 6:6 должен включиться режим тай-брейка");
+        assertEquals(State.TIEBREAK, set.getState(), "При 6:6 должен включиться режим тай-брейка");
         // Последующий вызов addPoint создаст TieBreakGame
         set.addPoint(playerA);
-        assertTrue(set.isInTieBreak());
+        assertEquals(State.TIEBREAK, set.getState());
         assertNotNull(set.getTieBreakGame());
     }
 
@@ -144,11 +144,11 @@ class SetTest {
         winGame(set, playerA);
         set.addPoint(playerA);
         set.addPoint(playerA);
-        assertFalse(set.isFinished());
+        assertEquals(State.TIEBREAK, set.getState());
         assertNull(set.getWinner());
         assertEquals(6, set.getScore().first());
         set.addPoint(playerA);
-        assertTrue(set.isFinished());
+        assertEquals(State.FINISHED, set.getState());
         assertEquals(set.getFirstCompetitor(), set.getWinner());
         assertEquals(7, set.getScore().first());
     }
@@ -181,13 +181,13 @@ class SetTest {
         set.addPoint(playerB);
         set.addPoint(playerA);
         // PlayerA - 7; PlayerB - 6
-        assertFalse(set.isFinished());
+        assertEquals(State.TIEBREAK, set.getState());
         assertFalse(set.getTieBreakGame().isFinished());
         set.addPoint(playerB);
         set.addPoint(playerB);
         set.addPoint(playerB);
         assertTrue(set.getTieBreakGame().isFinished());
-        assertTrue(set.isFinished());
+        assertEquals(State.FINISHED, set.getState());
         assertEquals(playerB, set.getWinner());
     }
 }

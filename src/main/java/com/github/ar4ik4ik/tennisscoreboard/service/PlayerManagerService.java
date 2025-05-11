@@ -5,14 +5,17 @@ import com.github.ar4ik4ik.tennisscoreboard.model.dto.PlayerRequestDto;
 import com.github.ar4ik4ik.tennisscoreboard.model.dto.PlayerResponseDto;
 import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.PlayerRepository;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import static com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerMapper.fromEntity;
 import static com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerMapper.fromRequestDto;
 
+@Builder
 @AllArgsConstructor
 public class PlayerManagerService {
 
-    private final PlayerRepository playerRepository;
+    @Builder.Default
+    private final PlayerRepository playerRepository = new PlayerRepository();
 
     public PlayerResponseDto getOrCreatePlayer(PlayerRequestDto requestDto) {
         try {

@@ -6,6 +6,7 @@ import com.github.ar4ik4ik.tennisscoreboard.model.dto.MatchRequestDto;
 import com.github.ar4ik4ik.tennisscoreboard.util.MatchFactory;
 import com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerEntityMapper;
 import com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerMapper;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
@@ -13,11 +14,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-
+@Builder
 @RequiredArgsConstructor
 public class OngoingMatchesService {
+    @Builder.Default
     private final Map<String, Match<Player>> currentMatches = new ConcurrentHashMap<>();
-    private final PlayerManagerService playerManagerService;
+    @Builder.Default
+    private final PlayerManagerService playerManagerService = PlayerManagerService.builder().build();
 
     public String createNewMatch(MatchRequestDto requestDto) {
         String matchId = UUID.randomUUID().toString();

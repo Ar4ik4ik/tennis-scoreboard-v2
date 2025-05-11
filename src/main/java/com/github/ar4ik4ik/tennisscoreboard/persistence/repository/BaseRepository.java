@@ -14,6 +14,7 @@ public class BaseRepository<K extends Serializable, E extends BaseEntity<K>>
 
     protected final Class<E> clazz;
 
+
     @Override
     public E save(E entity) {
         var entityManager = SessionManager.getSession();

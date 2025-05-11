@@ -32,7 +32,7 @@ public class OngoingMatchesServiceTest {
     void matchCreationTest() {
         SessionManager.getSession();
         var tx = SessionManager.getSession().getTransaction();
-        var matchService = new OngoingMatchesService();
+        var matchService = OngoingMatchesService.builder().build();
         String createdMatch = null;
         try {
             tx.begin();

@@ -5,15 +5,14 @@ import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.MatchRepository;
 import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.PlayerRepository;
 import com.github.ar4ik4ik.tennisscoreboard.util.mappers.MatchEntityMapper;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Builder
 @AllArgsConstructor
 public class FinishedMatchesPersistenceService {
 
-    private final MatchRepository matchRepository;
+    @Builder.Default
+    private final MatchRepository matchRepository = new MatchRepository();
 
     // Сервис всегда принимает уже завершенный матч
     // TODO: Логика только для плаеров, решить как работать с командами

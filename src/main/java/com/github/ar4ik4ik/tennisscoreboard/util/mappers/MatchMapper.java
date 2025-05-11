@@ -11,8 +11,8 @@ public class MatchMapper {
     public static FinishedMatchResponseDto fromEntity(MatchEntity match) {
         return FinishedMatchResponseDto.builder()
                 .id(match.getId())
-                .firstPlayer(PlayerMapper.fromEntity(match.getFirstPlayerEntity()))
-                .secondPlayer(PlayerMapper.fromEntity(match.getSecondPlayerEntity()))
+                .firstPlayer(PlayerMapper.fromEntity(match.getFirstPlayer()))
+                .secondPlayer(PlayerMapper.fromEntity(match.getSecondPlayer()))
                 .winner(PlayerMapper.fromEntity(match.getWinner()))
                 .build();
     }

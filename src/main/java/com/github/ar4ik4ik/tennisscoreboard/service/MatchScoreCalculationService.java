@@ -6,19 +6,25 @@ import com.github.ar4ik4ik.tennisscoreboard.model.dto.OngoingMatchResponseDto;
 import com.github.ar4ik4ik.tennisscoreboard.model.dto.ScoreIncreaseDto;
 import com.github.ar4ik4ik.tennisscoreboard.util.mappers.MatchMapper;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 
+@Builder
 @AllArgsConstructor
 public class MatchScoreCalculationService {
-
-    private final OngoingMatchesService ongoingMatchesService;
-    private final FinishedMatchesPersistenceService finishedMatchesService;
+    @Builder.Default
+    private final OngoingMatchesService ongoingMatchesService = OngoingMatchesService.builder().build();
+    @Builder.Default
+    private final FinishedMatchesPersistenceService finishedMatchesService = FinishedMatchesPersistenceService.builder().build();
 
     public OngoingMatchResponseDto addPointToPlayer(ScoreIncreaseDto requestDto) {
         var matchUUID = requestDto.matchUUID();
         var optMatch = ongoingMatchesService.getMatch(matchUUID);
         if (optMatch.isPresent()) {
             var currentMatch = optMatch.get();
-            currentMatch.addPoint(requestDto.scoringPlayer());
+
+            var scoringPlayer = currentMatch.getFirstCompetitor().getId().equals(requestDto.scoringPlayerId()) ?
+                    currentMatch.getFirstCompetitor() : currentMatch.getSecondCompetitor();
+            currentMatch.addPoint(scoringPlayer);
             if (currentMatch.getState() == State.FINISHED) {
                 ongoingMatchesService.removeMatch(matchUUID);
                 finishedMatchesService.saveMatch(currentMatch);

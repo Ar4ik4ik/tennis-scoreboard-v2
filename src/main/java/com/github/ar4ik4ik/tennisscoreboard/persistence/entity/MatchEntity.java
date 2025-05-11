@@ -20,11 +20,11 @@ public class MatchEntity implements BaseEntity<Integer> {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "first_player_id", nullable = false)
-    private PlayerEntity firstPlayerEntity;
+    private PlayerEntity firstPlayer;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "second_player_id", nullable = false)
-    private PlayerEntity secondPlayerEntity;
+    private PlayerEntity secondPlayer;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "winner_id", nullable = false)

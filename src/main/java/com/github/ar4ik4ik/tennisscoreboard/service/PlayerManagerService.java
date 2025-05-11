@@ -4,14 +4,15 @@ import com.github.ar4ik4ik.tennisscoreboard.exceptions.PlayerNotFoundException;
 import com.github.ar4ik4ik.tennisscoreboard.model.dto.PlayerRequestDto;
 import com.github.ar4ik4ik.tennisscoreboard.model.dto.PlayerResponseDto;
 import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.PlayerRepository;
+import lombok.AllArgsConstructor;
 
 import static com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerMapper.fromEntity;
 import static com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerMapper.fromRequestDto;
 
+@AllArgsConstructor
 public class PlayerManagerService {
 
-    private static final PlayerRepository playerRepository = PlayerRepository.getINSTANCE();
-    private static final PlayerManagerService INSTANCE = new PlayerManagerService();
+    private final PlayerRepository playerRepository;
 
     public PlayerResponseDto getOrCreatePlayer(PlayerRequestDto requestDto) {
         try {
@@ -26,7 +27,7 @@ public class PlayerManagerService {
     }
 
     public PlayerResponseDto findPlayer(PlayerRequestDto requestDto) {
-        var foundedPlayer =  playerRepository.findByName(requestDto.name());
+        var foundedPlayer =  playerRepository.findByPlayerName(requestDto.name());
         if (foundedPlayer.isPresent()) {
             return fromEntity(foundedPlayer.get());
         } else {
@@ -34,10 +35,4 @@ public class PlayerManagerService {
         }
     }
 
-    public static PlayerManagerService getInstance() {
-        return INSTANCE;
-    }
-
-    private PlayerManagerService() {
-    }
 }

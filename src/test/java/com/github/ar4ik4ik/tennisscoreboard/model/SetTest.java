@@ -1,14 +1,15 @@
 package com.github.ar4ik4ik.tennisscoreboard.model;
 
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Player;
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Set;
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.TieBreakGame;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.GameRule;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.SetRule;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.abstractrules.TieBreakRule;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.concreterules.ClassicGameRules;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.concreterules.ClassicSetRules;
-import com.github.ar4ik4ik.tennisscoreboard.model.rules.concreterules.ClassicTieBreakRules;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Set;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicGameRules;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicSetRules;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicTieBreakRules;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,9 @@ class SetTest {
     private GameRule gameRule;
     private SetRule setRule;
     private TieBreakRule tieBreakRule;
+    private SetScoringStrategy<Integer> setStrategy;
+    private GameScoreStrategy<GamePoint> gameStrategy;
+    private ScoringStrategy<Integer> tieBreakStrategy;
 
     @BeforeEach
     void init() {
@@ -35,6 +39,9 @@ class SetTest {
         gameRule = new ClassicGameRules(4, 3, 1);
         setRule = new ClassicSetRules(6,2,true);
         tieBreakRule = new ClassicTieBreakRules(7,2);
+        setStrategy = new ClassicSetScoringStrategy(setRule);
+        gameStrategy = new ClassicGameScoreStrategy(gameRule);
+        tieBreakStrategy = new TieBreakScoringStrategy(tieBreakRule);
     }
 
     private void winGame(Set<Player> set, Player winner) {
@@ -46,6 +53,9 @@ class SetTest {
     @Test
     void testSetUnfinishedAfterFiveGames() {
         var set = Set.<Player>builder()
+                .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
+                .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
                 .tieBreakRule(tieBreakRule)
@@ -58,14 +68,17 @@ class SetTest {
             winGame(set, playerA);
         }
 
-        assertFalse(set.isFinished(), "Сет не должен быть завершён при 5:0");
-        assertEquals(5, set.getFirstCompetitorScore(), "Счёт по первым геймам у A должен быть 5");
-        assertEquals(0, set.getSecondCompetitorScore(), "Счёт у B должен оставаться 0");
+        assertEquals(State.PLAYING, set.getState(), "Сет не должен быть завершён при 5:0");
+        assertEquals(5, set.getScore().first(), "Счёт по первым геймам у A должен быть 5");
+        assertEquals(0, set.getScore().second(), "Счёт у B должен оставаться 0");
     }
 
     @Test
     void testSetFinishedSixToZero() {
         var set = Set.<Player>builder()
+                .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
+                .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
                 .tieBreakRule(tieBreakRule)
@@ -78,13 +91,16 @@ class SetTest {
             winGame(set, playerA);
         }
 
-        assertTrue(set.isFinished(), "Сет должен завершиться при 6:0");
+        assertEquals(State.FINISHED, set.getState(), "Сет должен завершиться при 6:0");
         assertEquals(playerA, set.getWinner(), "Победителем сета должен стать A");
     }
 
     @Test
     void testTieBreakModeAtSixAll() {
         var set = Set.<Player>builder()
+                .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
+                .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
                 .tieBreakRule(tieBreakRule)
@@ -98,17 +114,19 @@ class SetTest {
             winGame(set, playerB);
         }
 
-        assertTrue(set.isTieBreakGameStarted(), "При 6:6 должен включиться режим тай-брейка");
+        assertEquals(State.TIEBREAK, set.getState(), "При 6:6 должен включиться режим тай-брейка");
         // Последующий вызов addPoint создаст TieBreakGame
         set.addPoint(playerA);
-        var last = set.getGames().getLast();
-        assertInstanceOf(TieBreakGame.class, last,
-                "После начала тай-брейка в списке игр должен появиться экземпляр TieBreakGame");
+        assertEquals(State.TIEBREAK, set.getState());
+        assertNotNull(set.getTieBreakGame());
     }
 
     @Test
     void testSetCompletionAfterTieBreak() {
         var set = Set.<Player>builder()
+                .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
+                .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
                 .tieBreakRule(tieBreakRule)
@@ -126,18 +144,21 @@ class SetTest {
         winGame(set, playerA);
         set.addPoint(playerA);
         set.addPoint(playerA);
-        assertFalse(set.isFinished());
+        assertEquals(State.TIEBREAK, set.getState());
         assertNull(set.getWinner());
-        assertEquals(6, set.getFirstCompetitorScore());
+        assertEquals(6, set.getScore().first());
         set.addPoint(playerA);
-        assertTrue(set.isFinished());
+        assertEquals(State.FINISHED, set.getState());
         assertEquals(set.getFirstCompetitor(), set.getWinner());
-        assertEquals(7, set.getFirstCompetitorScore());
+        assertEquals(7, set.getScore().first());
     }
 
     @Test
     void testPlayingAfterMaxTieBreakPoints() {
         var set = Set.<Player>builder()
+                .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
+                .strategy(setStrategy)
                 .setRule(setRule)
                 .gameRule(gameRule)
                 .tieBreakRule(tieBreakRule)
@@ -160,14 +181,13 @@ class SetTest {
         set.addPoint(playerB);
         set.addPoint(playerA);
         // PlayerA - 7; PlayerB - 6
-        assertFalse(set.isFinished());
-        assertFalse(set.getGames().getLast().isFinished());
+        assertEquals(State.TIEBREAK, set.getState());
+        assertFalse(set.getTieBreakGame().isFinished());
         set.addPoint(playerB);
         set.addPoint(playerB);
         set.addPoint(playerB);
-        assertTrue(set.getGames().getLast().isFinished());
-        assertTrue(set.isFinished());
+        assertTrue(set.getTieBreakGame().isFinished());
+        assertEquals(State.FINISHED, set.getState());
         assertEquals(playerB, set.getWinner());
-        assertFalse(set.isTieBreakGameStarted());
     }
 }

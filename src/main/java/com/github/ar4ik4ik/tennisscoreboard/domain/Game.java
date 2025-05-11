@@ -1,0 +1,89 @@
+package com.github.ar4ik4ik.tennisscoreboard.domain;
+
+import com.github.ar4ik4ik.tennisscoreboard.model.Competition;
+import com.github.ar4ik4ik.tennisscoreboard.model.Competitor;
+import com.github.ar4ik4ik.tennisscoreboard.model.State;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GameScore;
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
+import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
+import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoreStrategy;
+import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter(AccessLevel.PUBLIC)
+public class Game<T extends Competitor> implements Competition<T, GamePoint, GameRule> {
+
+    @Getter(AccessLevel.PUBLIC)
+    private final GameRule rules;
+
+    private final GameScoreStrategy<GamePoint> strategy;
+
+    private State state = PLAYING;
+
+    private final T firstCompetitor, secondCompetitor;
+
+    private Score<GamePoint> score = new GameScore(GamePoint.ZERO, GamePoint.ZERO);
+
+    private int advantageScoreCounter = 0;
+
+    @Setter(AccessLevel.PRIVATE)
+    private T currentAdvantageCompetitor;
+
+    private T winner = null;
+
+    @Builder
+    private Game(GameRule gameRule, T firstCompetitor, T secondCompetitor, GameScoreStrategy<GamePoint> strategy) {
+        this.rules = gameRule;
+        this.firstCompetitor = firstCompetitor;
+        this.secondCompetitor = secondCompetitor;
+        this.strategy = strategy;
+    }
+
+    @Override
+    public void finishCompetition(T winner) {
+        this.winner = winner;
+        state = FINISHED;
+    }
+
+    public void addPoint(T competitor) {
+
+        if (state == FINISHED) {
+            throw new IllegalStateException("Game is already finished");
+        }
+        boolean isFirst = competitor.equals(firstCompetitor);
+
+        if (!strategy.isDeuce(score)) {
+            var scoringResult = strategy.onPoint(score, isFirst);
+            this.score = scoringResult.score();
+
+            if (scoringResult.isFinished()) {
+                finishCompetition(competitor);
+            }
+        } else {
+            handleAdvantage(competitor);
+        }
+    }
+
+    private void handleAdvantage(T competitor) {
+        if (getCurrentAdvantageCompetitor() == null) {
+            setCurrentAdvantageCompetitor(competitor);
+            advantageScoreCounter++;
+        } else if (getCurrentAdvantageCompetitor().equals(competitor)) {
+            if (advantageScoreCounter >= rules.advantageOffset()) {
+                advantageScoreCounter++;
+                finishCompetition(competitor);
+            } else {
+                advantageScoreCounter++;
+            }
+        } else {
+            advantageScoreCounter--;
+            if (advantageScoreCounter == 0) {
+                currentAdvantageCompetitor = null;
+            }
+        }
+    }
+}

@@ -1,9 +1,9 @@
 package com.github.ar4ik4ik.tennisscoreboard.service;
 
-import com.github.ar4ik4ik.tennisscoreboard.mappers.MatchEntityMapper;
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Match;
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Player;
-import com.github.ar4ik4ik.tennisscoreboard.repository.MatchRepository;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Match;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
+import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.MatchRepository;
+import com.github.ar4ik4ik.tennisscoreboard.util.mappers.MatchEntityMapper;
 
 public class FinishedMatchesPersistenceService {
 

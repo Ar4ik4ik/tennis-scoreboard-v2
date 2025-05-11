@@ -1,6 +1,6 @@
 package com.github.ar4ik4ik.tennisscoreboard.model;
 
-import com.github.ar4ik4ik.tennisscoreboard.model.domain.Player;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.util.MatchFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

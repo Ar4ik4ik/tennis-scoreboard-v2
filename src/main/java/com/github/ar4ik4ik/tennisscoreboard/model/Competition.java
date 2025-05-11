@@ -1,13 +1,13 @@
 package com.github.ar4ik4ik.tennisscoreboard.model;
 
 
-public interface Competition<T extends Competitor, S, R> {
+import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
+
+public interface Competition<T extends Competitor, S , R> {
 
     T getFirstCompetitor();
     T getSecondCompetitor();
-    S getFirstCompetitorScore();
-    S getSecondCompetitorScore();
-    boolean isFinished();
+    Score<S> getScore();
     R getRules();
     void finishCompetition(T winner);
     void addPoint(T competitor);

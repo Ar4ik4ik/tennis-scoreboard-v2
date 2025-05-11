@@ -6,7 +6,6 @@ import com.github.ar4ik4ik.tennisscoreboard.model.scoring.IntScore;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ScoringStrategy;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

@@ -2,6 +2,7 @@ package com.github.ar4ik4ik.tennisscoreboard.domain;
 
 import com.github.ar4ik4ik.tennisscoreboard.model.Competition;
 import com.github.ar4ik4ik.tennisscoreboard.model.Competitor;
+import com.github.ar4ik4ik.tennisscoreboard.model.State;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.IntScore;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
@@ -14,6 +15,7 @@ import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ScoringStrategy;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.SetScoringStrategy;
 import lombok.Builder;
 import lombok.Getter;
+import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +35,9 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
     private final GameScoreStrategy<GamePoint> gameStrategy;
     private final ScoringStrategy<Integer> tieBreakStrategy;
 
-    private boolean inTieBreak = false;
     private TieBreakGame<T> tieBreakGame;
+    private State state = PLAYING;
 
-    private boolean isFinished = false;
     private T winner;
 
     private final List<Game<T>> games;
@@ -63,19 +64,19 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
     }
 
     public void addPoint(T competitor) {
-        if (isFinished) {
+        if (state == FINISHED) {
             throw new IllegalStateException("Set is already finished");
         }
 
-        if (!inTieBreak) {
+        if (state == PLAYING) {
             var currentGame = games.getLast();
             currentGame.addPoint(competitor);
-            if (currentGame.isFinished()) {
+            if (currentGame.getState() == FINISHED) {
                 var refreshedScore = refreshScore(competitor);
                 if (refreshedScore.isFinished()) {
                     finishCompetition(competitor);
                 } else if (strategy.shouldStartTieBreak(this.score)) {
-                    inTieBreak = true;
+                    state = TIEBREAK;
                     tieBreakGame = TieBreakGame.<T>builder()
                             .firstCompetitor(firstCompetitor)
                             .secondCompetitor(secondCompetitor)
@@ -116,7 +117,7 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
 
     @Override
     public void finishCompetition(T winner) {
+        state = FINISHED;
         this.winner = winner;
-        isFinished = true;
     }
 }

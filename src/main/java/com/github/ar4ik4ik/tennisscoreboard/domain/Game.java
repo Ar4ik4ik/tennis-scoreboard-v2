@@ -2,11 +2,13 @@ package com.github.ar4ik4ik.tennisscoreboard.domain;
 
 import com.github.ar4ik4ik.tennisscoreboard.model.Competition;
 import com.github.ar4ik4ik.tennisscoreboard.model.Competitor;
+import com.github.ar4ik4ik.tennisscoreboard.model.State;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GameScore;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoreStrategy;
+import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,14 +22,13 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
 
     private final GameScoreStrategy<GamePoint> strategy;
 
+    private State state = PLAYING;
+
     private final T firstCompetitor, secondCompetitor;
 
     private Score<GamePoint> score = new GameScore(GamePoint.ZERO, GamePoint.ZERO);
 
     private int advantageScoreCounter = 0;
-
-    @Getter(AccessLevel.PUBLIC)
-    private boolean isFinished = false;
 
     @Setter(AccessLevel.PRIVATE)
     private T currentAdvantageCompetitor;
@@ -45,12 +46,12 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     @Override
     public void finishCompetition(T winner) {
         this.winner = winner;
-        isFinished = true;
+        state = FINISHED;
     }
 
     public void addPoint(T competitor) {
 
-        if (isFinished) {
+        if (state == FINISHED) {
             throw new IllegalStateException("Game is already finished");
         }
         boolean isFirst = competitor.equals(firstCompetitor);

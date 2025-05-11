@@ -2,6 +2,7 @@ package com.github.ar4ik4ik.tennisscoreboard.domain;
 
 import com.github.ar4ik4ik.tennisscoreboard.model.Competition;
 import com.github.ar4ik4ik.tennisscoreboard.model.Competitor;
+import com.github.ar4ik4ik.tennisscoreboard.model.State;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GamePoint;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.IntScore;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
@@ -12,6 +13,7 @@ import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRu
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoreStrategy;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ScoringStrategy;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.SetScoringStrategy;
+import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +29,8 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
     private final GameRule gameRule;
     private final TieBreakRule tieBreakRule;
 
+    private State state = PLAYING;
+
     private final ScoringStrategy<Integer> strategy;
     private final SetScoringStrategy<Integer> setStrategy;
     private final GameScoreStrategy<GamePoint> gameStrategy;
@@ -37,7 +41,6 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
     @Getter(AccessLevel.PUBLIC)
     private Score<Integer> score = new IntScore(0, 0);
 
-    private boolean isFinished = false;
     private T winner = null;
 
     private final List<Set<T>> sets = new ArrayList<>();
@@ -69,20 +72,20 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
 
     @Override
     public void finishCompetition(T winner) {
-        isFinished = true;
+        state = FINISHED;
         this.winner = winner;
     }
 
     @Override
     public void addPoint(T competitor) {
 
-        if (isFinished) {
+        if (state == FINISHED) {
             throw new IllegalStateException("Match already finished");
         }
 
         var currentSet = sets.getLast();
         currentSet.addPoint(competitor);
-        if (!currentSet.isFinished()) {
+        if (currentSet.getState() == PLAYING) {
             return;
         }
         var scoringResult = strategy.onPoint(score, isFirst(competitor));

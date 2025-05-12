@@ -41,14 +41,4 @@ public class NewMatchServlet extends HttpServlet {
         resp.getWriter().write(objectMapper.writeValueAsString(match));
         resp.setStatus(HttpServletResponse.SC_OK);
     }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-        var matchUUID = req.getParameter("uuid");
-        var currentMatch = ongoingMatchesService.getMatch(matchUUID);
-        resp.getWriter().write(objectMapper.writeValueAsString(currentMatch));
-        resp.setStatus(HttpServletResponse.SC_OK);
-
-    }
 }

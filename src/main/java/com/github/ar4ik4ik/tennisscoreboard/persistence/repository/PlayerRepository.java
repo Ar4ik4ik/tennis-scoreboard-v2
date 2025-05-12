@@ -22,6 +22,8 @@ public class PlayerRepository extends BaseRepository<Integer, PlayerEntity> {
         criteriaQuery.select(root)
                 .where(criteriaBuilder.equal(root.get("name"), name));
 
-        return Optional.of(entityManager.createQuery(criteriaQuery).getResultList().getFirst());
+        var resultList = entityManager.createQuery(criteriaQuery).getResultList();
+
+        return resultList.stream().findFirst();
     }
 }

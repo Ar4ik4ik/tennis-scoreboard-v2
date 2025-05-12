@@ -2,49 +2,47 @@ package com.github.ar4ik4ik.tennisscoreboard.service;
 
 import com.github.ar4ik4ik.tennisscoreboard.domain.Match;
 import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
+import com.github.ar4ik4ik.tennisscoreboard.exceptions.MatchNotFoundException;
 import com.github.ar4ik4ik.tennisscoreboard.model.dto.MatchRequestDto;
 import com.github.ar4ik4ik.tennisscoreboard.util.MatchFactory;
-import com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerEntityMapper;
-import com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerMapper;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Builder
+
 @RequiredArgsConstructor
 public class OngoingMatchesService {
-    @Builder.Default
+
     private final Map<String, Match<Player>> currentMatches = new ConcurrentHashMap<>();
-    @Builder.Default
-    private final PlayerManagerService playerManagerService = PlayerManagerService.builder().build();
+    private final PlayerManagerService playerManagerService;
+    private final MatchFactory matchFactory;
 
     public String createNewMatch(MatchRequestDto requestDto) {
         String matchId = UUID.randomUUID().toString();
 
-        var firstPlayer = PlayerEntityMapper.fromEntity(
-                PlayerMapper.fromResponseDto(
-                        playerManagerService.getOrCreatePlayer(requestDto.firstPlayer())));
-
-        var secondPlayer = PlayerEntityMapper.fromEntity(
-                PlayerMapper.fromResponseDto(
-                        playerManagerService.getOrCreatePlayer(requestDto.secondPlayer())));
+        var firstPlayer = playerManagerService.getOrCreatePlayer(requestDto.firstPlayer());
+        var secondPlayer = playerManagerService.getOrCreatePlayer(requestDto.secondPlayer());
 
         // TODO: Костыль с созданием матча через фактори, кажется временным решением, чтобы не передавать из контроллера много параметров
-        this.currentMatches.put(matchId, MatchFactory.classicMatch(firstPlayer, secondPlayer));
-
+        this.currentMatches.put(matchId, matchFactory.classicMatch(firstPlayer, secondPlayer));
         return matchId;
     }
 
-    public Optional<Match<Player>> getMatch(String matchId) {
-        return Optional.ofNullable(currentMatches.get(matchId));
+    public Match<Player> getMatch(String matchId) {
+        var foundMatch = currentMatches.get(matchId);
+        if (foundMatch == null) {
+            throw new MatchNotFoundException(String.format("Match with id: %s not found", matchId));
+        } else {
+            return foundMatch;
+        }
     }
 
-    public void removeMatch(String matchId) {
-        currentMatches.remove(matchId);
+    // Need life-cycle, auto delete after time out;
+    public boolean removeMatch(String matchId, Match<Player> match) {
+        currentMatches.remove(matchId, match);
+        return true;
     }
 
 }

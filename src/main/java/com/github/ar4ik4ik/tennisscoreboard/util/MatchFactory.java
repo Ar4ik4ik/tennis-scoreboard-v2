@@ -13,7 +13,7 @@ import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.TieBreakScoringStrateg
 
 public class MatchFactory {
 
-    public static Match<Player> classicMatch(Player firstPlayer, Player secondPlayer) {
+    public Match<Player> classicMatch(Player firstPlayer, Player secondPlayer) {
         var gameRule = new ClassicGameRules(4, 3, 1);
         var setRule = new ClassicSetRules(6, 2, true);
         var matchRule = new ClassicMatchRules(2);

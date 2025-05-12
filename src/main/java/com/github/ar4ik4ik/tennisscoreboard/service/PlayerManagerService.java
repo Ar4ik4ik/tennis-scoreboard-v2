@@ -1,41 +1,30 @@
 package com.github.ar4ik4ik.tennisscoreboard.service;
 
-import com.github.ar4ik4ik.tennisscoreboard.exceptions.PlayerNotFoundException;
+import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.model.dto.PlayerRequestDto;
-import com.github.ar4ik4ik.tennisscoreboard.model.dto.PlayerResponseDto;
 import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.PlayerRepository;
+import com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerEntityMapper;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.extern.log4j.Log4j2;
 
-import static com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerMapper.fromEntity;
 import static com.github.ar4ik4ik.tennisscoreboard.util.mappers.PlayerMapper.fromRequestDto;
 
-@Builder
+
+@Log4j2
 @AllArgsConstructor
 public class PlayerManagerService {
 
-    @Builder.Default
-    private final PlayerRepository playerRepository = new PlayerRepository();
+    private final PlayerRepository playerRepository;
 
-    public PlayerResponseDto getOrCreatePlayer(PlayerRequestDto requestDto) {
-        try {
-            return findPlayer(requestDto);
-        } catch (PlayerNotFoundException e) {
-            return createPlayer(requestDto);
-        }
+    public Player getOrCreatePlayer(PlayerRequestDto requestDto) {
+        log.debug("Player request: {}", requestDto.toString());
+        return playerRepository.findByPlayerName(requestDto.name())
+                .map(PlayerEntityMapper::fromEntity)
+                .orElseGet(() -> createPlayer(requestDto));
     }
 
-    public PlayerResponseDto createPlayer(PlayerRequestDto requestDto) {
-        return fromEntity(playerRepository.save(fromRequestDto(requestDto)));
+    public Player createPlayer(PlayerRequestDto requestDto) {
+        log.debug("Request for creating new player: {}", requestDto);
+        return PlayerEntityMapper.fromEntity(playerRepository.save(fromRequestDto(requestDto)));
     }
-
-    public PlayerResponseDto findPlayer(PlayerRequestDto requestDto) {
-        var foundedPlayer =  playerRepository.findByPlayerName(requestDto.name());
-        if (foundedPlayer.isPresent()) {
-            return fromEntity(foundedPlayer.get());
-        } else {
-            throw new PlayerNotFoundException(String.format("Player with name: %s, not found", requestDto.name()));
-        }
-    }
-
 }

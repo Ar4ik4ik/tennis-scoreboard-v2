@@ -4,5 +4,5 @@ import lombok.Builder;
 
 @Builder
 public record FinishedMatchResponseDto(
-        Integer id, PlayerResponseDto firstPlayer, PlayerResponseDto secondPlayer, PlayerResponseDto winner) {
+        String firstPlayerName, String secondPlayerName, String winnerName) {
 }

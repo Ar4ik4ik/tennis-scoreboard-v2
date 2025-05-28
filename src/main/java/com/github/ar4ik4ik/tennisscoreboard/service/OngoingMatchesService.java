@@ -4,7 +4,9 @@ import com.github.ar4ik4ik.tennisscoreboard.domain.Match;
 import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.exceptions.MatchNotFoundException;
 import com.github.ar4ik4ik.tennisscoreboard.model.dto.MatchRequestDto;
+import com.github.ar4ik4ik.tennisscoreboard.model.dto.OngoingMatchResponseDto;
 import com.github.ar4ik4ik.tennisscoreboard.util.MatchFactory;
+import com.github.ar4ik4ik.tennisscoreboard.util.mappers.MatchMapper;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
@@ -28,6 +30,15 @@ public class OngoingMatchesService {
         // TODO: Костыль с созданием матча через фактори, кажется временным решением, чтобы не передавать из контроллера много параметров
         this.currentMatches.put(matchId, matchFactory.classicMatch(firstPlayer, secondPlayer));
         return matchId;
+    }
+
+    public OngoingMatchResponseDto getOngoingMatch(String matchId) {
+        var foundMatch = currentMatches.get(matchId);
+        if (foundMatch == null) {
+            throw new MatchNotFoundException(String.format("Match with id: %s not found", matchId));
+        } else {
+            return MatchMapper.fromModel(foundMatch, matchId);
+        }
     }
 
     public Match<Player> getMatch(String matchId) {

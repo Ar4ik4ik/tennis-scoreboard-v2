@@ -3,7 +3,6 @@ package com.github.ar4ik4ik.tennisscoreboard.persistence.repository;
 import com.github.ar4ik4ik.tennisscoreboard.persistence.entity.PlayerEntity;
 import com.github.ar4ik4ik.tennisscoreboard.util.SessionManager;
 
-
 import java.util.Optional;
 
 

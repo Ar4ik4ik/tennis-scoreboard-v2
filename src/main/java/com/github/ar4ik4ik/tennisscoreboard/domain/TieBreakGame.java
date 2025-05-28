@@ -54,6 +54,10 @@ public class TieBreakGame<T extends Competitor> implements Competition<T, Intege
         }
     }
 
+    public String getTieBreakScore() {
+        return String.format("%s-%s", score.first(), score.second());
+    }
+
     private boolean isFirst(T competitor) {
         return competitor.equals(firstCompetitor);
     }

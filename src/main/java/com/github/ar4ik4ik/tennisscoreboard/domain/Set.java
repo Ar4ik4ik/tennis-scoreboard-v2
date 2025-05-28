@@ -15,11 +15,14 @@ import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ScoringStrategy;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.SetScoringStrategy;
 import lombok.Builder;
 import lombok.Getter;
-import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
+
+@Log4j2
 @Getter
 public class Set<T extends Competitor> implements Competition<T, Integer, SetRule> {
 
@@ -94,6 +97,10 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
                 finishCompetition(competitor);
             }
         }
+    }
+
+    public Game<T> getCurrentGame() {
+        return games.getLast();
     }
 
     private void startNextGame() {

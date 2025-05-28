@@ -14,6 +14,7 @@ import com.github.ar4ik4ik.tennisscoreboard.rule.config.concreterules.ClassicTie
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -41,9 +42,9 @@ public class MatchTest {
                 .name("B")
                 .build();
         gameRule = new ClassicGameRules(4, 3, 1);
-        setRule = new ClassicSetRules(6,2,true);
+        setRule = new ClassicSetRules(6, 2, true);
         matchRule = new ClassicMatchRules(2);
-        tieBreakRule = new ClassicTieBreakRules(7,2);
+        tieBreakRule = new ClassicTieBreakRules(7, 2);
         setStrategy = new ClassicSetScoringStrategy(setRule);
         gameStrategy = new ClassicGameScoreStrategy(gameRule);
         tieBreakStrategy = new TieBreakScoringStrategy(tieBreakRule);
@@ -59,7 +60,7 @@ public class MatchTest {
     }
 
     @Test
-    // Инкремент поинтов после победы в сете
+        // Инкремент поинтов после победы в сете
     void testPointsIncrementAfterSetWin() {
         var match = Match.<Player>builder()
                 .matchRule(matchRule)
@@ -84,7 +85,7 @@ public class MatchTest {
     }
 
     @Test
-    // Завершение после двух побед (в зависимости от Rules)
+        // Завершение после двух побед (в зависимости от Rules)
     void testMatchFinishing() {
         var match = Match.<Player>builder()
                 .matchRule(matchRule)
@@ -109,5 +110,32 @@ public class MatchTest {
 
     }
 
+    @Test
+    void testTieBreakGameStarting() {
+        var match = Match.<Player>builder()
+                .matchRule(matchRule)
+                .gameRule(gameRule)
+                .setRule(setRule)
+                .tieBreakRule(tieBreakRule)
+                .strategy(matchStrategy)
+                .setStrategy(setStrategy)
+                .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
+                .firstCompetitor(playerA)
+                .secondCompetitor(playerB)
+                .build();
 
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 4; j++) {
+                match.addPoint(playerA);
+            }
+            for (int j = 0; j < 4; j++) {
+                match.addPoint(playerB);
+            }
+        }
+
+        assertEquals("TIEBREAK", match.getCurrentSet().getState().name());
+        match.addPoint(playerA);
+        assertEquals("PLAYING",match.getState().name());
+    }
 }

@@ -13,6 +13,14 @@ public class MatchRepository extends BaseRepository<Integer, MatchEntity> {
         super(MatchEntity.class);
     }
 
+    public List<MatchEntity> findAll(int offset, int limit) {
+        Session session = SessionManager.getSession();
+        return session.createQuery("SELECT m " + "FROM MatchEntity m", clazz)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
     public List<MatchEntity> findAllByPlayerName(String playerName, int offset, int limit) {
         Session session = SessionManager.getSession();
         return session.createQuery("SELECT m " + "FROM   MatchEntity m "

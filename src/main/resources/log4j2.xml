@@ -9,8 +9,11 @@
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>
-        <Logger name="org.hibernate" level="DEBUG" additivity="false">
+        <Logger name="org.hibernate" level="WARN" additivity="false">
             <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="com.github.ar4ik4ik.tennisscoreboard" level="DEBUG" additivity="false">
+                <AppenderRef ref="Console"/>
         </Logger>
     </Loggers>
 </Configuration>

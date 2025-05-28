@@ -5,7 +5,7 @@ import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.exceptions.MatchPersistenceException;
 import com.github.ar4ik4ik.tennisscoreboard.exceptions.PlayerNotFoundException;
 import com.github.ar4ik4ik.tennisscoreboard.model.State;
-import com.github.ar4ik4ik.tennisscoreboard.model.dto.MatchResponseDto;
+import com.github.ar4ik4ik.tennisscoreboard.model.dto.OngoingMatchResponseDto;
 import com.github.ar4ik4ik.tennisscoreboard.model.dto.ScoreIncreaseDto;
 import com.github.ar4ik4ik.tennisscoreboard.util.mappers.MatchMapper;
 import lombok.AllArgsConstructor;
@@ -19,10 +19,9 @@ public class MatchScoreCalculationService {
     private final OngoingMatchesService ongoingMatchesService;
     private final FinishedMatchesPersistenceService finishedMatchesService;
 
-    public MatchResponseDto addPointToPlayer(ScoreIncreaseDto requestDto) throws MatchPersistenceException {
+    public OngoingMatchResponseDto addPointToPlayer(ScoreIncreaseDto requestDto) throws MatchPersistenceException {
         var matchUUID = requestDto.matchUUID();
         var match = ongoingMatchesService.getMatch(matchUUID);
-
         match.addPoint(chooseScoringPlayer(requestDto, match));
         if (match.getState() == State.FINISHED) {
             boolean removed = ongoingMatchesService.removeMatch(matchUUID, match);
@@ -32,8 +31,7 @@ public class MatchScoreCalculationService {
                  log.warn("Concurrent finish detected for match {}", matchUUID);
             }
         }
-
-        return MatchMapper.fromModel(match);
+        return MatchMapper.fromModel(match, matchUUID);
     }
 
     private Player chooseScoringPlayer(ScoreIncreaseDto requestDto, Match<Player> match) {

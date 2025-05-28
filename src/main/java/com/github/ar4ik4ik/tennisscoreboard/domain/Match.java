@@ -13,13 +13,14 @@ import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.TieBreakRu
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoreStrategy;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.ScoringStrategy;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.SetScoringStrategy;
-import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
 
 @Getter
 public class Match<T extends Competitor> implements Competition<T, Integer, MatchRule> {
@@ -78,14 +79,12 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
 
     @Override
     public void addPoint(T competitor) {
-
         if (state == FINISHED) {
             throw new IllegalStateException("Match already finished");
         }
-
         var currentSet = sets.getLast();
         currentSet.addPoint(competitor);
-        if (currentSet.getState() == PLAYING) {
+        if (currentSet.getState() == PLAYING || currentSet.getState() == TIEBREAK) {
             return;
         }
         var scoringResult = strategy.onPoint(score, isFirst(competitor));
@@ -95,6 +94,10 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
         } else {
             startNewSet();
         }
+    }
+
+    public Set<T> getCurrentSet() {
+        return sets.getLast();
     }
 
     private void startNewSet() {

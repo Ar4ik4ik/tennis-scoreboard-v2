@@ -8,11 +8,13 @@ import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GameScore;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
 import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.GameScoreStrategy;
-import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import static com.github.ar4ik4ik.tennisscoreboard.model.State.FINISHED;
+import static com.github.ar4ik4ik.tennisscoreboard.model.State.PLAYING;
 
 @Getter(AccessLevel.PUBLIC)
 public class Game<T extends Competitor> implements Competition<T, GamePoint, GameRule> {
@@ -65,6 +67,18 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
             }
         } else {
             handleAdvantage(competitor);
+        }
+    }
+
+    public String getGameScore() {
+        if (!strategy.isDeuce(score)) {
+            return String.format("%s-%s", score.first().getDisplayValue(), score.second().getDisplayValue());
+        } else {
+            if (currentAdvantageCompetitor == null) {
+                return "DEUCE-DEUCE";
+            } else {
+                return currentAdvantageCompetitor.equals(firstCompetitor) ? "AD-40" : "40-AD";
+            }
         }
     }
 

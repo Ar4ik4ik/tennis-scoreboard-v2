@@ -27,4 +27,19 @@ public class FinishedMatchesPersistenceService {
             throw new MatchPersistenceException("Failed to save match " + MatchMapper.fromModel(match), ex);
         }
     }
+
+    public List<FinishedMatchResponseDto> getAllFinishedMatches(int offset, int limit) {
+        return matchRepository.findAll(offset, limit)
+                .stream()
+                .map(MatchEntityMapper::fromEntity)
+                .toList();
+    }
+
+    public List<FinishedMatchResponseDto> getAllFinishedMatchesByName(String name, int offset, int limit) {
+        return matchRepository.findAllByPlayerName(name, offset, limit)
+                .stream()
+                .map(MatchEntityMapper::fromEntity)
+                .toList();
+    }
+
 }

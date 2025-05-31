@@ -23,7 +23,7 @@
         <li class="nav-item ms-auto">
             <ul class="d-flex gap-3 mb-0 p-0">
                 <li><a class="nav-link" href="../../index.html">Home</a></li>
-                <li><a class="nav-link" href="#">Match List</a></li>
+                <li><a class="nav-link" href="${req.getContextPath()}/matches">Match List</a></li>
             </ul>
         </li>
     </ul>
@@ -47,22 +47,16 @@
             <tr>
                 <th class="table-text">Player</th>
                 <th class="table-text">Sets</th>
-                <th class="table-text">Games</th>
-                <th class="table-text">Points</th>
             </tr>
             </thead>
             <tbody>
             <tr class="player1">
                 <td class="table-text">${matchDto.player1().name()}</td>
                 <td class="table-text">${matchDto.player1Sets()}</td>
-                <td class="table-text">${matchDto.player1GamesInCurrentSet()}</td>
-                <td class="table-text">${matchDto.player1Points()}</td>
             </tr>
             <tr class="player2">
                 <td class="table-text">${matchDto.player2().name()}</td>
                 <td class="table-text">${matchDto.player2Sets()}</td>
-                <td class="table-text">${matchDto.player2GamesInCurrentSet()}</td>
-                <td class="table-text">${matchDto.player2Points()}</td>
             </tr>
             </tbody>
         </table>

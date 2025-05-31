@@ -30,14 +30,31 @@ public class FinishedMatchesPersistenceService {
         }
     }
 
-    public List<FinishedMatchResponseDto> getAllFinishedMatches(int offset, int limit) {
+    public int getTotalPages(int maxItems, String playerName) {
+        long objectCount;
+        if (playerName == null || playerName.isBlank()) {
+           objectCount = matchRepository.getObjectCount();
+        } else {
+            objectCount = matchRepository.getObjectCount(playerName);
+        }
+        return (int) Math.ceil((double) objectCount / maxItems);
+    }
+
+    public List<FinishedMatchResponseDto> getAllFinishedMatches(int currentPage, int limit) {
+
+        int offset = (currentPage * limit) - limit;
+
         return matchRepository.findAll(offset, limit)
                 .stream()
                 .map(MatchEntityMapper::fromEntity)
                 .toList();
     }
 
-    public List<FinishedMatchResponseDto> getAllFinishedMatchesByName(String name, int offset, int limit) {
+    public List<FinishedMatchResponseDto> getAllFinishedMatchesByName(String name, int currentPage, int limit) {
+
+        int offset = (currentPage * limit) - limit;
+
+
         return matchRepository.findAllByPlayerName(name, offset, limit)
                 .stream()
                 .map(MatchEntityMapper::fromEntity)

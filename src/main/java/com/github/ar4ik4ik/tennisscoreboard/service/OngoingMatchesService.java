@@ -50,10 +50,8 @@ public class OngoingMatchesService {
         }
     }
 
-    // Need life-cycle, auto delete after time out;
     public boolean removeMatch(String matchId, Match<Player> match) {
         currentMatches.remove(matchId, match);
         return true;
     }
-
 }

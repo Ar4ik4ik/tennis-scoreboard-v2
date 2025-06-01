@@ -24,16 +24,4 @@ public class BaseRepository<K extends Serializable, E extends BaseEntity<K>>
         log.debug("Saved new entity {}", entity);
         return entity;
     }
-
-    public Optional<E> findById(K id) {
-        var entityManager = SessionManager.getSession();
-        return Optional.of(entityManager.find(clazz, id));
-    }
-
-    @Override
-    public List<E> findAll() {
-        var entityManager = SessionManager.getSession();
-        var criteria = entityManager.getCriteriaBuilder().createQuery(clazz);
-        return entityManager.createQuery(criteria).getResultList();
-    }
 }

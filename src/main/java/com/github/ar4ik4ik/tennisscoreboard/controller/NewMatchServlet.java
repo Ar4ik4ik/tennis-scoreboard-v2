@@ -23,7 +23,6 @@ public class NewMatchServlet extends HttpServlet {
                 .getAttribute("ongoingMatchesService");
     }
 
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 

@@ -45,6 +45,4 @@ public class MatchRepository extends BaseRepository<Integer, MatchEntity> {
                 "where m.firstPlayer.name = :name" +
                 " or m.secondPlayer.name = :name").setParameter("name", playerName).getSingleResult();
     }
-
-
 }

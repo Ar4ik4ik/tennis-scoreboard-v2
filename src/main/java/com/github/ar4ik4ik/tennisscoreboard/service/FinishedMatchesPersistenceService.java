@@ -54,11 +54,9 @@ public class FinishedMatchesPersistenceService {
 
         int offset = (currentPage * limit) - limit;
 
-
         return matchRepository.findAllByPlayerName(name, offset, limit)
                 .stream()
                 .map(MatchEntityMapper::fromEntity)
                 .toList();
     }
-
 }

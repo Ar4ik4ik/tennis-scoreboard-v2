@@ -21,34 +21,34 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
 
     @Getter(AccessLevel.PUBLIC)
     private final GameRule rules;
-    private final GameScoreStrategy<GamePoint> strategy;
-    private State state = PLAYING;
+    private final GameScoreStrategy<GamePoint> scoreUpdateStrategy;
+    private State gameState = PLAYING;
     private final T firstCompetitor, secondCompetitor;
-    private Score<GamePoint> score = new GameScore(GamePoint.ZERO, GamePoint.ZERO);
+    private Score<GamePoint> currentGameScore = new GameScore(GamePoint.ZERO, GamePoint.ZERO);
     private int advantageScoreCounter = 0;
 
     @Setter(AccessLevel.PRIVATE)
     private T currentAdvantageCompetitor;
-    private T winner = null;
+    private T winner;
 
     @Builder
-    private Game(GameRule gameRule, T firstCompetitor, T secondCompetitor, GameScoreStrategy<GamePoint> strategy) {
+    private Game(GameRule gameRule, T firstCompetitor, T secondCompetitor, GameScoreStrategy<GamePoint> scoreUpdateStrategy) {
         this.rules = gameRule;
         this.firstCompetitor = firstCompetitor;
         this.secondCompetitor = secondCompetitor;
-        this.strategy = strategy;
+        this.scoreUpdateStrategy = scoreUpdateStrategy;
     }
 
     @Override
     public void finishCompetition(T winner) {
         this.winner = winner;
-        state = FINISHED;
+        gameState = FINISHED;
     }
 
     public void addPoint(T competitor) {
         validateAddPoint(competitor);
 
-        if (!strategy.isDeuce(score)) {
+        if (!scoreUpdateStrategy.isDeuce(currentGameScore)) {
             processRegularPoint(competitor);
         } else {
             handleAdvantage(competitor);
@@ -56,21 +56,28 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     }
 
     public String getGameScore() {
-        if (!strategy.isDeuce(score)) {
-            return String.format("%s-%s", score.first().getDisplayValue(), score.second().getDisplayValue());
+        if (!scoreUpdateStrategy.isDeuce(currentGameScore)) {
+            return formatRegularScore();
         } else {
-            if (currentAdvantageCompetitor == null) {
-                return "DEUCE-DEUCE";
-            } else {
-                return currentAdvantageCompetitor.equals(firstCompetitor) ? "AD-40" : "40-AD";
-            }
+            return formatDeuceScore();
         }
+    }
+
+    private String formatRegularScore() {
+       return String.format("%s-%s", currentGameScore.first().getDisplayValue(), currentGameScore.second().getDisplayValue());
+    }
+
+    private String formatDeuceScore() {
+        if (currentAdvantageCompetitor == null) {
+            return "DEUCE-DEUCE";
+        }
+        return currentAdvantageCompetitor.equals(firstCompetitor) ? "AD-40" : "40-AD";
     }
 
     private void processRegularPoint(T competitor) {
         boolean isFirst = competitor.equals(firstCompetitor);
-        var scoringResult = strategy.onPoint(score, isFirst);
-        this.score = scoringResult.score();
+        var scoringResult = scoreUpdateStrategy.onPoint(currentGameScore, isFirst);
+        this.currentGameScore = scoringResult.score();
 
         if (scoringResult.isFinished()) {
             finishCompetition(competitor);
@@ -78,7 +85,7 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     }
 
     private void validateAddPoint(T competitor) {
-        if (state == FINISHED) {
+        if (gameState == FINISHED) {
             throw new IllegalStateException("Game is already finished");
         }
         if (!competitor.equals(firstCompetitor) && !competitor.equals(secondCompetitor)) {
@@ -99,10 +106,14 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
         advantageScoreCounter++;
     }
 
+    private boolean hasEnoughAdvantagePoints() {
+        return advantageScoreCounter >= rules.advantageOffset();
+    }
+
     private void processExistingAdvantage(T competitor) {
         if (getCurrentAdvantageCompetitor().equals(competitor)) {
             advantageScoreCounter++;
-            if (advantageScoreCounter >= rules.advantageOffset()) {
+            if (hasEnoughAdvantagePoints()) {
                 finishCompetition(competitor);
             }
         } else {

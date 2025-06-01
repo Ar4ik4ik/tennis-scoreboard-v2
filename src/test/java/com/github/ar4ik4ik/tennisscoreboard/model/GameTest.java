@@ -57,10 +57,10 @@ public class GameTest {
 
         Assertions.assertEquals(firstPlayer, game.getFirstCompetitor());
         Assertions.assertEquals(game.getSecondCompetitor(), secondPlayer);
-        Assertions.assertEquals(ZERO, game.getScore().second());
+        Assertions.assertEquals(ZERO, game.getCurrentGameScore().second());
         Assertions.assertNull(game.getWinner());
         Assertions.assertEquals(rules,game.getRules());
-        assertEquals(State.PLAYING, game.getState());
+        assertEquals(State.PLAYING, game.getGameState());
         Assertions.assertEquals(0, game.getAdvantageScoreCounter());
         Assertions.assertNull(game.getCurrentAdvantageCompetitor());
     }
@@ -68,21 +68,21 @@ public class GameTest {
     @Test
     public void finishGameTest() {
         var game = initGame();
-        assertEquals(State.PLAYING, game.getState());
+        assertEquals(State.PLAYING, game.getGameState());
 
         game.finishCompetition(game.getFirstCompetitor());
 
         Assertions.assertEquals(game.getFirstCompetitor(), game.getWinner());
-        assertEquals(State.FINISHED, game.getState());
+        assertEquals(State.FINISHED, game.getGameState());
     }
 
     @Test
     public void pointIncrementTest() {
         var game = initGame();
 
-        Assertions.assertEquals(ZERO, game.getScore().first());
+        Assertions.assertEquals(ZERO, game.getCurrentGameScore().first());
         game.addPoint(game.getFirstCompetitor());
-        Assertions.assertEquals(FIFTEEN, game.getScore().first());
+        Assertions.assertEquals(FIFTEEN, game.getCurrentGameScore().first());
     }
 
     @Test
@@ -98,22 +98,22 @@ public class GameTest {
         Assertions.assertNull(game.getCurrentAdvantageCompetitor());
         game.addPoint(game.getFirstCompetitor());
         Assertions.assertEquals(game.getFirstCompetitor(), game.getCurrentAdvantageCompetitor());
-        assertEquals(State.PLAYING, game.getState());
+        assertEquals(State.PLAYING, game.getGameState());
     }
 
     @Test
     public void winWithoutDeuceTest() {
         var game = initGame();
-        assertEquals(State.PLAYING, game.getState());
+        assertEquals(State.PLAYING, game.getGameState());
         for (int i = 0; i < 2; i++) {
             game.addPoint(game.getFirstCompetitor());
             game.addPoint(game.getSecondCompetitor());
         }
-        assertEquals(State.PLAYING, game.getState());
+        assertEquals(State.PLAYING, game.getGameState());
         game.addPoint(game.getFirstCompetitor());
-        assertEquals(State.PLAYING, game.getState());
+        assertEquals(State.PLAYING, game.getGameState());
         game.addPoint(game.getFirstCompetitor());
-        assertEquals(State.FINISHED, game.getState());
+        assertEquals(State.FINISHED, game.getGameState());
         Assertions.assertEquals(game.getFirstCompetitor(), game.getWinner());
     }
 
@@ -139,6 +139,6 @@ public class GameTest {
         game.addPoint(game.getSecondCompetitor());
         Assertions.assertEquals(2, game.getAdvantageScoreCounter());
         Assertions.assertEquals(game.getSecondCompetitor(), game.getCurrentAdvantageCompetitor());
-        assertEquals(State.FINISHED, game.getState());
+        assertEquals(State.FINISHED, game.getGameState());
     }
 }

@@ -8,6 +8,4 @@ import java.util.Optional;
 
 public interface Repository <K extends Serializable, E extends BaseEntity<K>> {
     E save(E entity);
-    List<E> findAll();
-    Optional<E> findById(K id);
 }

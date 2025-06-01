@@ -35,5 +35,4 @@ public class MatchFactory {
                 .setStrategy(setStrategy)
                 .build();
     }
-
 }

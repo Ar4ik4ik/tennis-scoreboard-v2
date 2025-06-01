@@ -69,8 +69,8 @@ class SetTest {
         }
 
         assertEquals(State.PLAYING, set.getState(), "Сет не должен быть завершён при 5:0");
-        assertEquals(5, set.getScore().first(), "Счёт по первым геймам у A должен быть 5");
-        assertEquals(0, set.getScore().second(), "Счёт у B должен оставаться 0");
+        assertEquals(5, set.getCurrentGameScore().first(), "Счёт по первым геймам у A должен быть 5");
+        assertEquals(0, set.getCurrentGameScore().second(), "Счёт у B должен оставаться 0");
     }
 
     @Test
@@ -146,11 +146,11 @@ class SetTest {
         set.addPoint(playerA);
         assertEquals(State.TIEBREAK, set.getState());
         assertNull(set.getWinner());
-        assertEquals(6, set.getScore().first());
+        assertEquals(6, set.getCurrentGameScore().first());
         set.addPoint(playerA);
         assertEquals(State.FINISHED, set.getState());
         assertEquals(set.getFirstCompetitor(), set.getWinner());
-        assertEquals(7, set.getScore().first());
+        assertEquals(7, set.getCurrentGameScore().first());
     }
 
     @Test

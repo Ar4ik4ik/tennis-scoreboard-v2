@@ -14,24 +14,9 @@ public class PlayerMapper {
                 .build();
     }
 
-    public static PlayerResponseDto fromEntity(PlayerEntity player) {
-        return PlayerResponseDto.builder()
-                .id(player.getId())
-                .name(player.getName())
-                .build();
-    }
-
     public static PlayerEntity fromRequestDto(PlayerRequestDto requestDto) {
         return PlayerEntity.builder()
                 .name(requestDto.name())
                 .build();
     }
-
-    public static PlayerEntity fromResponseDto(PlayerResponseDto responseDto) {
-        return PlayerEntity.builder()
-                .id(responseDto.id())
-                .name(responseDto.name())
-                .build();
-    }
-
 }

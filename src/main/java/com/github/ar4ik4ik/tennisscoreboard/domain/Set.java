@@ -74,7 +74,7 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
         if (state == PLAYING) {
             var currentGame = games.getLast();
             currentGame.addPoint(competitor);
-            if (currentGame.getState() == FINISHED) {
+            if (currentGame.getGameState() == FINISHED) {
                 var refreshedScore = refreshScore(competitor);
                 if (refreshedScore.isFinished()) {
                     finishCompetition(competitor);

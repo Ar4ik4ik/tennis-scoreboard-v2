@@ -46,19 +46,10 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     }
 
     public void addPoint(T competitor) {
-
-        if (state == FINISHED) {
-            throw new IllegalStateException("Game is already finished");
-        }
-        boolean isFirst = competitor.equals(firstCompetitor);
+        validateAddPoint(competitor);
 
         if (!strategy.isDeuce(score)) {
-            var scoringResult = strategy.onPoint(score, isFirst);
-            this.score = scoringResult.score();
-
-            if (scoringResult.isFinished()) {
-                finishCompetition(competitor);
-            }
+            processRegularPoint(competitor);
         } else {
             handleAdvantage(competitor);
         }
@@ -73,6 +64,25 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
             } else {
                 return currentAdvantageCompetitor.equals(firstCompetitor) ? "AD-40" : "40-AD";
             }
+        }
+    }
+
+    private void processRegularPoint(T competitor) {
+        boolean isFirst = competitor.equals(firstCompetitor);
+        var scoringResult = strategy.onPoint(score, isFirst);
+        this.score = scoringResult.score();
+
+        if (scoringResult.isFinished()) {
+            finishCompetition(competitor);
+        }
+    }
+
+    private void validateAddPoint(T competitor) {
+        if (state == FINISHED) {
+            throw new IllegalStateException("Game is already finished");
+        }
+        if (!competitor.equals(firstCompetitor) && !competitor.equals(secondCompetitor)) {
+            throw new IllegalArgumentException("Received competitor not from this game");
         }
     }
 

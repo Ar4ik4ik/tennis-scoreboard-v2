@@ -10,6 +10,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
+import static com.github.ar4ik4ik.tennisscoreboard.model.State.FINISHED;
+
 
 @Getter(AccessLevel.PUBLIC)
 public class TieBreakGame<T extends Competitor> implements Competition<T, Integer, TieBreakRule> {
@@ -43,22 +45,31 @@ public class TieBreakGame<T extends Competitor> implements Competition<T, Intege
 
     public void addPoint(T competitor) {
 
-        if (isFinished) {
-            throw new IllegalStateException("Tie-Break already finished");
-        }
-
-        var scoreResult = strategy.onPoint(score, isFirst(competitor));
-        score = scoreResult.score();
-        if (scoreResult.isFinished()) {
-            finishCompetition(competitor);
-        }
+        validateAddPoint(competitor);
+        processPoint(competitor);
     }
 
     public String getTieBreakScore() {
         return String.format("%s-%s", score.first(), score.second());
     }
 
-    private boolean isFirst(T competitor) {
+    private void processPoint(T competitor) {
+        var scoreResult = strategy.onPoint(score, isFirstCompetitor(competitor));
+        score = scoreResult.score();
+        if (scoreResult.isFinished()) {
+            finishCompetition(competitor);
+        }
+    }
+
+    private void validateAddPoint(T competitor) {
+        if (isFinished()) {
+            throw new IllegalStateException("Game is already finished");
+        }
+        if (!competitor.equals(firstCompetitor) && !competitor.equals(secondCompetitor)) {
+            throw new IllegalArgumentException("Received competitor not from this game");
+        }
+    }
+    private boolean isFirstCompetitor(T competitor) {
         return competitor.equals(firstCompetitor);
     }
 

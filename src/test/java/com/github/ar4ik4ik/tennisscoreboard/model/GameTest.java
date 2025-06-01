@@ -31,7 +31,7 @@ public class GameTest {
                 .gameRule(rules)
                 .firstCompetitor(firstPlayer)
                 .secondCompetitor(secondPlayer)
-                .strategy(strategy)
+                .scoreUpdateStrategy(strategy)
                 .build();
     }
 
@@ -57,7 +57,7 @@ public class GameTest {
 
         Assertions.assertEquals(firstPlayer, game.getFirstCompetitor());
         Assertions.assertEquals(game.getSecondCompetitor(), secondPlayer);
-        Assertions.assertEquals(ZERO, game.getCurrentGameScore().second());
+        Assertions.assertEquals(ZERO, game.getScore().second());
         Assertions.assertNull(game.getWinner());
         Assertions.assertEquals(rules,game.getRules());
         assertEquals(State.PLAYING, game.getGameState());
@@ -80,9 +80,9 @@ public class GameTest {
     public void pointIncrementTest() {
         var game = initGame();
 
-        Assertions.assertEquals(ZERO, game.getCurrentGameScore().first());
+        Assertions.assertEquals(ZERO, game.getScore().first());
         game.addPoint(game.getFirstCompetitor());
-        Assertions.assertEquals(FIFTEEN, game.getCurrentGameScore().first());
+        Assertions.assertEquals(FIFTEEN, game.getScore().first());
     }
 
     @Test

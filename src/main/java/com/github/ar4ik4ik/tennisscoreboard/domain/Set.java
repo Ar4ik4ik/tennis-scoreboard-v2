@@ -62,7 +62,7 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
                 .gameRule(gameRule)
                 .firstCompetitor(firstCompetitor)
                 .secondCompetitor(secondCompetitor)
-                .strategy(gameStrategy)
+                .scoreUpdateStrategy(gameStrategy)
                 .build());
     }
 
@@ -108,7 +108,7 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
                 .gameRule(gameRule)
                 .firstCompetitor(firstCompetitor)
                 .secondCompetitor(secondCompetitor)
-                .strategy(gameStrategy)
+                .scoreUpdateStrategy(gameStrategy)
                 .build());
     }
 

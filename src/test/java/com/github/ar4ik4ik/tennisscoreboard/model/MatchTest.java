@@ -75,12 +75,12 @@ public class MatchTest {
                 .secondCompetitor(playerB)
                 .build();
 
-        assertEquals(0, match.getCurrentGameScore().first(), "Начальный счет не может быть > 0");
+        assertEquals(0, match.getScore().first(), "Начальный счет не может быть > 0");
         winSet(match, playerA);
-        assertEquals(1, match.getCurrentGameScore().first(), "Счет после инкремента должен быть == 1");
+        assertEquals(1, match.getScore().first(), "Счет после инкремента должен быть == 1");
         assertEquals(State.PLAYING, match.getState(), "Матч не может быть завершен, так как не соблюдено правило завершения");
         winSet(match, playerA);
-        assertEquals(2, match.getCurrentGameScore().first(), "Счет должен быть == 2");
+        assertEquals(2, match.getScore().first(), "Счет должен быть == 2");
         assertEquals(State.FINISHED, match.getState(), "Матч должен быть завершен, так как соблюдено правило завершения");
     }
 

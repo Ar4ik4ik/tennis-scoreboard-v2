@@ -7,7 +7,7 @@ public interface Competition<T extends Competitor, S , R> {
 
     T getFirstCompetitor();
     T getSecondCompetitor();
-    Score<S> getCurrentGameScore();
+    Score<S> getScore();
     R getRules();
     void finishCompetition(T winner);
     void addPoint(T competitor);

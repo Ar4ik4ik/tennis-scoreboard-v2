@@ -24,7 +24,7 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     private final GameScoreStrategy<GamePoint> scoreUpdateStrategy;
     private State gameState = PLAYING;
     private final T firstCompetitor, secondCompetitor;
-    private Score<GamePoint> currentGameScore = new GameScore(GamePoint.ZERO, GamePoint.ZERO);
+    private Score<GamePoint> score = new GameScore(GamePoint.ZERO, GamePoint.ZERO);
     private int advantageScoreCounter = 0;
 
     @Setter(AccessLevel.PRIVATE)
@@ -48,7 +48,7 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     public void addPoint(T competitor) {
         validateAddPoint(competitor);
 
-        if (!scoreUpdateStrategy.isDeuce(currentGameScore)) {
+        if (!scoreUpdateStrategy.isDeuce(score)) {
             processRegularPoint(competitor);
         } else {
             handleAdvantage(competitor);
@@ -56,7 +56,7 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     }
 
     public String getGameScore() {
-        if (!scoreUpdateStrategy.isDeuce(currentGameScore)) {
+        if (!scoreUpdateStrategy.isDeuce(score)) {
             return formatRegularScore();
         } else {
             return formatDeuceScore();
@@ -64,7 +64,7 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     }
 
     private String formatRegularScore() {
-       return String.format("%s-%s", currentGameScore.first().getDisplayValue(), currentGameScore.second().getDisplayValue());
+       return String.format("%s-%s", score.first().getDisplayValue(), score.second().getDisplayValue());
     }
 
     private String formatDeuceScore() {
@@ -76,8 +76,8 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
 
     private void processRegularPoint(T competitor) {
         boolean isFirst = competitor.equals(firstCompetitor);
-        var scoringResult = scoreUpdateStrategy.onPoint(currentGameScore, isFirst);
-        this.currentGameScore = scoringResult.score();
+        var scoringResult = scoreUpdateStrategy.onPoint(score, isFirst);
+        this.score = scoringResult.score();
 
         if (scoringResult.isFinished()) {
             finishCompetition(competitor);

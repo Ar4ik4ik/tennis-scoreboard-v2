@@ -17,8 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
 
@@ -43,7 +42,7 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
 
     private T winner;
 
-    private final List<Game<T>> games;
+    private final LinkedList<Game<T>> gameHistory;
 
     @Builder
     private Set(SetRule setRule, T firstCompetitor, T secondCompetitor, GameRule gameRule, TieBreakRule tieBreakRule,
@@ -57,54 +56,78 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
         this.strategy = strategy;
         this.tieBreakStrategy = tieBreakStrategy;
         this.winner = null;
-        this.games = new ArrayList<>();
-        this.games.add(Game.<T>builder()
-                .gameRule(gameRule)
-                .firstCompetitor(firstCompetitor)
-                .secondCompetitor(secondCompetitor)
-                .scoreUpdateStrategy(gameStrategy)
-                .build());
+        this.gameHistory = new LinkedList<>();
+        startNewGame();
     }
 
-    public void addPoint(T competitor) {
-        if (state == FINISHED) {
-            throw new IllegalStateException("Set is already finished");
-        }
-
-        if (state == PLAYING) {
-            var currentGame = games.getLast();
-            currentGame.addPoint(competitor);
-            if (currentGame.getGameState() == FINISHED) {
-                var refreshedScore = refreshScore(competitor);
-                if (refreshedScore.isFinished()) {
-                    finishCompetition(competitor);
-                } else if (strategy.shouldStartTieBreak(this.score)) {
-                    state = TIEBREAK;
-                    tieBreakGame = TieBreakGame.<T>builder()
-                            .firstCompetitor(firstCompetitor)
-                            .secondCompetitor(secondCompetitor)
-                            .tieBreakRule(tieBreakRule)
-                            .strategy(tieBreakStrategy)
-                            .build();
-                } else {
-                    startNextGame();
-                }
-            }
-        } else {
-            tieBreakGame.addPoint(competitor);
-            if (tieBreakGame.isFinished()) {
-                refreshScore(competitor);
-                finishCompetition(competitor);
-            }
-        }
+    @Override
+    public void finishCompetition(T winner) {
+        state = FINISHED;
+        this.winner = winner;
     }
 
     public Game<T> getCurrentGame() {
-        return games.getLast();
+        return gameHistory.getLast();
     }
 
-    private void startNextGame() {
-        this.games.add(Game.<T>builder()
+    public void addPoint(T competitor) {
+        validateAddPoint(competitor);
+
+        if (state == PLAYING) {
+            var currentGame = gameHistory.getLast();
+            currentGame.addPoint(competitor);
+            if (currentGame.getGameState() == FINISHED) {
+                handleSetCompletion(competitor);
+            }
+        } else {
+            handleTieBreakPoint(competitor);
+        }
+    }
+
+    private void handleSetCompletion(T competitor) {
+        var refreshedScore = refreshScore(competitor);
+        if (refreshedScore.isFinished()) {
+            finishCompetition(competitor);
+        } else if (strategy.shouldStartTieBreak(this.score)) {
+            startTieBreak();
+        } else {
+            beginNextGameRound();
+        }
+    }
+
+    private void handleTieBreakPoint(T competitor) {
+        tieBreakGame.addPoint(competitor);
+        if (tieBreakGame.isFinished()) {
+            refreshScore(competitor);
+            finishCompetition(competitor);
+        }
+    }
+
+    private void startTieBreak() {
+        state = TIEBREAK;
+        tieBreakGame = TieBreakGame.<T>builder()
+                .firstCompetitor(firstCompetitor)
+                .secondCompetitor(secondCompetitor)
+                .tieBreakRule(tieBreakRule)
+                .strategy(tieBreakStrategy)
+                .build();
+    }
+
+    private void beginNextGameRound() {
+        startNewGame();
+    }
+
+    private void validateAddPoint(T competitor) {
+        if (state == FINISHED) {
+            throw new IllegalStateException("Game is already finished");
+        }
+        if (!competitor.equals(firstCompetitor) && !competitor.equals(secondCompetitor)) {
+            throw new IllegalArgumentException("Received competitor not from this game");
+        }
+    }
+
+    private void startNewGame() {
+        this.gameHistory.add(Game.<T>builder()
                 .gameRule(gameRule)
                 .firstCompetitor(firstCompetitor)
                 .secondCompetitor(secondCompetitor)
@@ -120,11 +143,5 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
         var scoringResult = strategy.onGameWin(score, isFirst(competitor));
         this.score = scoringResult.score();
         return scoringResult;
-    }
-
-    @Override
-    public void finishCompetition(T winner) {
-        state = FINISHED;
-        this.winner = winner;
     }
 }

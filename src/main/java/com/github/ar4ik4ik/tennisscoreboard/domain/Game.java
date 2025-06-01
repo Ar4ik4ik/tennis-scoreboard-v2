@@ -21,20 +21,14 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
 
     @Getter(AccessLevel.PUBLIC)
     private final GameRule rules;
-
     private final GameScoreStrategy<GamePoint> strategy;
-
     private State state = PLAYING;
-
     private final T firstCompetitor, secondCompetitor;
-
     private Score<GamePoint> score = new GameScore(GamePoint.ZERO, GamePoint.ZERO);
-
     private int advantageScoreCounter = 0;
 
     @Setter(AccessLevel.PRIVATE)
     private T currentAdvantageCompetitor;
-
     private T winner = null;
 
     @Builder
@@ -84,14 +78,22 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
 
     private void handleAdvantage(T competitor) {
         if (getCurrentAdvantageCompetitor() == null) {
-            setCurrentAdvantageCompetitor(competitor);
+            startAdvantage(competitor);
+        } else {
+            processExistingAdvantage(competitor);
+        }
+    }
+
+    private void startAdvantage(T competitor) {
+        setCurrentAdvantageCompetitor(competitor);
+        advantageScoreCounter++;
+    }
+
+    private void processExistingAdvantage(T competitor) {
+        if (getCurrentAdvantageCompetitor().equals(competitor)) {
             advantageScoreCounter++;
-        } else if (getCurrentAdvantageCompetitor().equals(competitor)) {
             if (advantageScoreCounter >= rules.advantageOffset()) {
-                advantageScoreCounter++;
                 finishCompetition(competitor);
-            } else {
-                advantageScoreCounter++;
             }
         } else {
             advantageScoreCounter--;

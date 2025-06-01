@@ -119,10 +119,10 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
 
     private void validateAddPoint(T competitor) {
         if (state == FINISHED) {
-            throw new IllegalStateException("Game is already finished");
+            throw new IllegalStateException("Set is already finished");
         }
         if (!competitor.equals(firstCompetitor) && !competitor.equals(secondCompetitor)) {
-            throw new IllegalArgumentException("Received competitor not from this game");
+            throw new IllegalArgumentException("Received competitor not from this set");
         }
     }
 
@@ -135,12 +135,12 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
                 .build());
     }
 
-    private boolean isFirst(T competitor) {
+    private boolean isFirstCompetitor(T competitor) {
         return competitor.equals(firstCompetitor);
     }
 
     private ScoringResult<Score<Integer>> refreshScore(T competitor) {
-        var scoringResult = strategy.onGameWin(score, isFirst(competitor));
+        var scoringResult = strategy.onGameWin(score, isFirstCompetitor(competitor));
         this.score = scoringResult.score();
         return scoringResult;
     }

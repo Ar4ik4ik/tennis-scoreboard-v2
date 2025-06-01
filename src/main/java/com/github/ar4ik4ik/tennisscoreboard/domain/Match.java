@@ -17,7 +17,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
@@ -44,7 +44,7 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
 
     private T winner = null;
 
-    private final List<Set<T>> sets = new ArrayList<>();
+    private final List<Set<T>> sets = new LinkedList<>();
 
     @Builder
     private Match(MatchRule matchRule, T firstCompetitor, T secondCompetitor,
@@ -59,16 +59,7 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
         this.setStrategy = setStrategy;
         this.gameStrategy = gameStrategy;
         this.tieBreakStrategy = tieBreakStrategy;
-        this.sets.add(Set.<T>builder()
-                .gameRule(gameRule)
-                .setRule(setRule)
-                .strategy(setStrategy)
-                .gameStrategy(gameStrategy)
-                .tieBreakStrategy(tieBreakStrategy)
-                .tieBreakRule(tieBreakRule)
-                .firstCompetitor(firstCompetitor)
-                .secondCompetitor(secondCompetitor)
-                .build());
+        startNewSet();
     }
 
     @Override
@@ -79,15 +70,26 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
 
     @Override
     public void addPoint(T competitor) {
-        if (state == FINISHED) {
-            throw new IllegalStateException("Match already finished");
-        }
+        validateAddPoint(competitor);
+        processCurrentSetPoint(competitor);
+    }
+
+
+    public Set<T> getCurrentSet() {
+        return sets.getLast();
+    }
+
+    private void processCurrentSetPoint(T competitor) {
         var currentSet = sets.getLast();
         currentSet.addPoint(competitor);
         if (currentSet.getState() == PLAYING || currentSet.getState() == TIEBREAK) {
             return;
         }
-        var scoringResult = strategy.onPoint(score, isFirst(competitor));
+        handleSetCompletion(competitor);
+    }
+
+    private void handleSetCompletion(T competitor) {
+        var scoringResult = strategy.onPoint(score, isFirstCompetitor(competitor));
         score = scoringResult.score();
         if (scoringResult.isFinished()) {
             finishCompetition(competitor);
@@ -96,11 +98,11 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
         }
     }
 
-    public Set<T> getCurrentSet() {
-        return sets.getLast();
-    }
-
     private void startNewSet() {
+        Set<T> last = sets.getLast();
+        if (last.getState() != State.FINISHED) {
+            throw new IllegalStateException("Previous set not finished");
+        }
         this.sets.add(Set.<T>builder()
                 .gameRule(gameRule)
                 .setRule(setRule)
@@ -113,7 +115,17 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
                 .build());
     }
 
-    private boolean isFirst(T competitor) {
+    private void validateAddPoint(T competitor) {
+        if (state == FINISHED) {
+            throw new IllegalStateException("Set is already finished");
+        }
+        if (!competitor.equals(firstCompetitor) && !competitor.equals(secondCompetitor)) {
+            throw new IllegalArgumentException("Received competitor not from this game");
+        }
+    }
+
+
+    private boolean isFirstCompetitor(T competitor) {
         return competitor.equals(firstCompetitor);
     }
 }

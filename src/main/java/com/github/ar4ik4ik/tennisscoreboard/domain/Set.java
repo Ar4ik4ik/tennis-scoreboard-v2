@@ -100,6 +100,7 @@ public class Set<T extends Competitor> implements Competition<T, Integer, SetRul
         if (tieBreakGame.isFinished()) {
             refreshScore(competitor);
             finishCompetition(competitor);
+            tieBreakGame.finishCompetition(competitor);
         }
     }
 

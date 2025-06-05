@@ -1,8 +1,8 @@
 package com.github.ar4ik4ik.tennisscoreboard.model;
 
+import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.model.dto.MatchRequestDto;
 import com.github.ar4ik4ik.tennisscoreboard.model.dto.PlayerRequestDto;
-import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.PlayerRepository;
 import com.github.ar4ik4ik.tennisscoreboard.service.OngoingMatchesService;
 import com.github.ar4ik4ik.tennisscoreboard.service.PlayerManagerService;
@@ -11,7 +11,7 @@ import com.github.ar4ik4ik.tennisscoreboard.util.SessionManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OngoingMatchesServiceTest {
 

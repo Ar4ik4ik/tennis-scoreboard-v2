@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
+import static com.github.ar4ik4ik.tennisscoreboard.util.ParameterValidator.isEmpty;
 
 import java.io.IOException;
 
@@ -31,8 +32,7 @@ public class NewMatchServlet extends HttpServlet {
 
         log.debug("Creating new match with players {} and {}", firstPlayer, secondPlayer);
 
-        if (firstPlayer == null || secondPlayer == null || firstPlayer.isBlank() || secondPlayer.isBlank()
-                || firstPlayer.equals(secondPlayer)) {
+        if (isEmpty(firstPlayer) || isEmpty(secondPlayer) || firstPlayer.equals(secondPlayer)) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             req.setAttribute("error", "Имена игроков должны быть заполнены и различными");
             return;

@@ -16,7 +16,7 @@ public enum GamePoint {
             case ZERO -> FIFTEEN;
             case FIFTEEN -> THIRTY;
             case THIRTY -> FORTY;
-            case FORTY -> throw new IllegalStateException("Cannot advance beyond FORTY without winning.");
+            case FORTY -> this;
         };
     }
 

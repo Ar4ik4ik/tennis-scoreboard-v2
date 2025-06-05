@@ -5,9 +5,11 @@ import com.github.ar4ik4ik.tennisscoreboard.model.scoring.GameScore;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.GameRule;
 
+
 public class ClassicGameScoreStrategy implements GameScoreStrategy<GamePoint> {
 
-    private final int deuceThreshold, pointsToWin;
+    private final int pointsToWin;
+    private final int deuceThreshold;
 
     public ClassicGameScoreStrategy(GameRule rules) {
         this.deuceThreshold = rules.deuceThreshold();
@@ -20,6 +22,7 @@ public class ClassicGameScoreStrategy implements GameScoreStrategy<GamePoint> {
         var firstScore = score.first();
         var secondScore = score.second();
 
+        // Счет не будет обновлен так как игра закончена
         if (!isDeuce(score) && canWinWithoutDeuce(firstScore, secondScore, isFirst)) {
             return new ScoringResult<>(new GameScore(firstScore, secondScore), true);
         }

@@ -3,6 +3,8 @@ package com.github.ar4ik4ik.tennisscoreboard.rule.strategy;
 import com.github.ar4ik4ik.tennisscoreboard.model.scoring.Score;
 import com.github.ar4ik4ik.tennisscoreboard.rule.config.abstractrules.SetRule;
 
+import java.util.Objects;
+
 public class ClassicSetScoringStrategy implements SetScoringStrategy<Integer> {
 
     private final int gamesToWin;
@@ -34,7 +36,7 @@ public class ClassicSetScoringStrategy implements SetScoringStrategy<Integer> {
         if (!useTieBreak) {
             return false;
         } else {
-            return score.first() == gamesToWin && score.second() == gamesToWin;
+            return Objects.equals(score.first(), gamesToWin) && Objects.equals(score.second(), gamesToWin);
         }
     }
 

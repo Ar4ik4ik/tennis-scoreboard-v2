@@ -2,10 +2,7 @@ package com.github.ar4ik4ik.tennisscoreboard.controller;
 
 import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.MatchRepository;
 import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.PlayerRepository;
-import com.github.ar4ik4ik.tennisscoreboard.service.FinishedMatchesPersistenceService;
-import com.github.ar4ik4ik.tennisscoreboard.service.MatchScoreCalculationService;
-import com.github.ar4ik4ik.tennisscoreboard.service.OngoingMatchesService;
-import com.github.ar4ik4ik.tennisscoreboard.service.PlayerManagerService;
+import com.github.ar4ik4ik.tennisscoreboard.service.*;
 import com.github.ar4ik4ik.tennisscoreboard.util.MatchFactory;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -24,11 +21,12 @@ public class AppContextListener implements ServletContextListener {
         var ongoingMatchesService = new OngoingMatchesService(playerService, new MatchFactory());
         var finishedMatchesService = new FinishedMatchesPersistenceService(matchRepo);
         var matchScoreService = new MatchScoreCalculationService(ongoingMatchesService, finishedMatchesService);
+        var finishedMatchesQuery = new FinishedMatchesQueryService(matchRepo);
 
         sce.getServletContext().setAttribute("playerService", playerService);
         sce.getServletContext().setAttribute("ongoingMatchesService", ongoingMatchesService);
         sce.getServletContext().setAttribute("finishedMatchesService", finishedMatchesService);
         sce.getServletContext().setAttribute("matchScoreService", matchScoreService);
-
+        sce.getServletContext().setAttribute("finishedMatchesQuery", finishedMatchesQuery);
     }
 }

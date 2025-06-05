@@ -27,7 +27,6 @@ public class OngoingMatchesService {
         var firstPlayer = playerManagerService.getOrCreatePlayer(requestDto.firstPlayer());
         var secondPlayer = playerManagerService.getOrCreatePlayer(requestDto.secondPlayer());
 
-        // TODO: Костыль с созданием матча через фактори, кажется временным решением, чтобы не передавать из контроллера много параметров
         this.currentMatches.put(matchId, matchFactory.classicMatch(firstPlayer, secondPlayer));
         return matchId;
     }
@@ -51,7 +50,10 @@ public class OngoingMatchesService {
     }
 
     public boolean removeMatch(String matchId, Match<Player> match) {
-        currentMatches.remove(matchId, match);
-        return true;
+        return currentMatches.remove(matchId, match);
+    }
+
+    protected void insertMatch(String matchId, Match<Player> match) {
+        this.currentMatches.put(matchId, match);
     }
 }

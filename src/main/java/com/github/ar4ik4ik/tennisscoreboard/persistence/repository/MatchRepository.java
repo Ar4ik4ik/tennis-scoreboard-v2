@@ -7,7 +7,7 @@ import org.hibernate.Session;
 import java.util.List;
 
 
-public class MatchRepository extends BaseRepository<Integer, MatchEntity> {
+public class MatchRepository extends BaseRepository<Integer, MatchEntity> implements MatchRepositoryImpl{
 
     public MatchRepository() {
         super(MatchEntity.class);

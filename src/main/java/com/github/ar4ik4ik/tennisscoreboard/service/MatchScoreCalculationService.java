@@ -26,7 +26,12 @@ public class MatchScoreCalculationService {
         if (match.getState() == State.FINISHED) {
             boolean removed = ongoingMatchesService.removeMatch(matchUUID, match);
             if (removed) {
-                finishedMatchesService.saveMatch(match);
+                try {
+                    finishedMatchesService.saveMatch(match);
+                } catch (MatchPersistenceException e) {
+                    ongoingMatchesService.insertMatch(matchUUID, match);
+                    throw new MatchPersistenceException(e.getMessage());
+                }
             } else {
                  log.warn("Concurrent finish detected for match {}", matchUUID);
             }
@@ -35,9 +40,12 @@ public class MatchScoreCalculationService {
     }
 
     private Player chooseScoringPlayer(ScoreIncreaseDto requestDto, Match<Player> match) {
-        if (requestDto.scoringPlayerId() == match.getFirstCompetitor().getId()) {
+        int firstId = match.getFirstCompetitor().getId();
+        int secondId = match.getSecondCompetitor().getId();
+
+        if (requestDto.scoringPlayerId() == firstId) {
             return match.getFirstCompetitor();
-        } else if (requestDto.scoringPlayerId() == match.getSecondCompetitor().getId()) {
+        } else if (requestDto.scoringPlayerId() == secondId) {
             return match.getSecondCompetitor();
         } else {
             throw new PlayerNotFoundException(

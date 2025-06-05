@@ -71,12 +71,11 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
         if (currentAdvantageCompetitor == null) {
             return "DEUCE-DEUCE";
         }
-        return currentAdvantageCompetitor.equals(firstCompetitor) ? "AD-40" : "40-AD";
+        return isFirstCompetitor(currentAdvantageCompetitor) ? "AD-40" : "40-AD";
     }
 
     private void processRegularPoint(T competitor) {
-        boolean isFirst = competitor.equals(firstCompetitor);
-        var scoringResult = scoreUpdateStrategy.onPoint(score, isFirst);
+        var scoringResult = scoreUpdateStrategy.onPoint(score, isFirstCompetitor(competitor));
         this.score = scoringResult.score();
 
         if (scoringResult.isFinished()) {
@@ -85,6 +84,7 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
     }
 
     private void validateAddPoint(T competitor) {
+
         if (gameState == FINISHED) {
             throw new IllegalStateException("Game is already finished");
         }
@@ -122,5 +122,9 @@ public class Game<T extends Competitor> implements Competition<T, GamePoint, Gam
                 currentAdvantageCompetitor = null;
             }
         }
+    }
+
+    private boolean isFirstCompetitor(T competitor) {
+        return competitor.equals(firstCompetitor);
     }
 }

@@ -16,12 +16,18 @@ import com.github.ar4ik4ik.tennisscoreboard.rule.strategy.SetScoringStrategy;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import static com.github.ar4ik4ik.tennisscoreboard.model.State.*;
 
+/**
+ * Match — класс, управляющий последовательностью сетов.
+ * @param <T> тип Competitor (например, Player с полями id, name)
+ */
+@Slf4j
 @Getter
 public class Match<T extends Competitor> implements Competition<T, Integer, MatchRule> {
 
@@ -59,7 +65,16 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
         this.setStrategy = setStrategy;
         this.gameStrategy = gameStrategy;
         this.tieBreakStrategy = tieBreakStrategy;
-        startNewSet();
+        this.sets.add(Set.<T>builder()
+                .gameRule(gameRule)
+                .setRule(setRule)
+                .strategy(setStrategy)
+                .gameStrategy(gameStrategy)
+                .tieBreakStrategy(tieBreakStrategy)
+                .tieBreakRule(tieBreakRule)
+                .firstCompetitor(firstCompetitor)
+                .secondCompetitor(secondCompetitor)
+                .build());
     }
 
     @Override
@@ -69,7 +84,7 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
     }
 
     @Override
-    public void addPoint(T competitor) {
+    public synchronized void addPoint(T competitor) {
         validateAddPoint(competitor);
         processCurrentSetPoint(competitor);
     }
@@ -89,6 +104,7 @@ public class Match<T extends Competitor> implements Competition<T, Integer, Matc
     }
 
     private void handleSetCompletion(T competitor) {
+        log.info("Set {} won by {}", sets.size(), competitor.getName());
         var scoringResult = strategy.onPoint(score, isFirstCompetitor(competitor));
         score = scoringResult.score();
         if (scoringResult.isFinished()) {

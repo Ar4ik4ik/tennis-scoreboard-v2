@@ -3,22 +3,20 @@ package com.github.ar4ik4ik.tennisscoreboard.service;
 import com.github.ar4ik4ik.tennisscoreboard.domain.Match;
 import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.exceptions.MatchPersistenceException;
-import com.github.ar4ik4ik.tennisscoreboard.model.dto.FinishedMatchResponseDto;
 import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.MatchRepository;
+import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.MatchRepositoryImpl;
 import com.github.ar4ik4ik.tennisscoreboard.util.mappers.MatchEntityMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.List;
 
 @Log4j2
 @AllArgsConstructor
 public class FinishedMatchesPersistenceService {
 
-    private final MatchRepository matchRepository;
+    private final MatchRepositoryImpl matchRepository;
 
     // Сервис всегда принимает уже завершенный матч
-    // TODO: Логика только для плаеров, решить как работать с командами
     public void saveMatch(Match<Player> match) throws MatchPersistenceException {
         var entity = MatchEntityMapper.fromModel(match);
         try {
@@ -26,37 +24,8 @@ public class FinishedMatchesPersistenceService {
             log.info("Saved finished match {}", match);
         } catch (RuntimeException ex) {
             log.error("Error saving match {}", match, ex);
-            throw new MatchPersistenceException("Failed to save match " + match, ex);
+            throw new MatchPersistenceException("Failed to save match " + match + " " + ex.getMessage());
         }
     }
 
-    public int getTotalPages(int maxItems, String playerName) {
-        long objectCount;
-        if (playerName == null || playerName.isBlank()) {
-           objectCount = matchRepository.getObjectCount();
-        } else {
-            objectCount = matchRepository.getObjectCount(playerName);
-        }
-        return (int) Math.ceil((double) objectCount / maxItems);
-    }
-
-    public List<FinishedMatchResponseDto> getAllFinishedMatches(int currentPage, int limit) {
-
-        int offset = (currentPage * limit) - limit;
-
-        return matchRepository.findAll(offset, limit)
-                .stream()
-                .map(MatchEntityMapper::fromEntity)
-                .toList();
-    }
-
-    public List<FinishedMatchResponseDto> getAllFinishedMatchesByName(String name, int currentPage, int limit) {
-
-        int offset = (currentPage * limit) - limit;
-
-        return matchRepository.findAllByPlayerName(name, offset, limit)
-                .stream()
-                .map(MatchEntityMapper::fromEntity)
-                .toList();
-    }
 }

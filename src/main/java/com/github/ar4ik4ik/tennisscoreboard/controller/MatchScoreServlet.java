@@ -13,10 +13,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import static com.github.ar4ik4ik.tennisscoreboard.util.ParameterValidator.isEmpty;
 
 import java.io.IOException;
 import java.util.Objects;
+
+import static com.github.ar4ik4ik.tennisscoreboard.util.ParameterValidator.isEmpty;
 
 @WebServlet(urlPatterns = "/match-score")
 public class MatchScoreServlet extends HttpServlet {

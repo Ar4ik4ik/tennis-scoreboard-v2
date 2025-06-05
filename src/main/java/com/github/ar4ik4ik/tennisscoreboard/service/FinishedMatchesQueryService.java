@@ -1,7 +1,6 @@
 package com.github.ar4ik4ik.tennisscoreboard.service;
 
 import com.github.ar4ik4ik.tennisscoreboard.model.dto.FinishedMatchResponseDto;
-import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.MatchRepository;
 import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.MatchRepositoryImpl;
 import com.github.ar4ik4ik.tennisscoreboard.util.mappers.MatchEntityMapper;
 import lombok.AllArgsConstructor;

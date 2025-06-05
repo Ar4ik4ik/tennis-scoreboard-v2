@@ -8,9 +8,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
-import static com.github.ar4ik4ik.tennisscoreboard.util.ParameterValidator.isEmpty;
 
 import java.io.IOException;
+
+import static com.github.ar4ik4ik.tennisscoreboard.util.ParameterValidator.isEmpty;
 
 @Log4j2
 @WebServlet(urlPatterns = "/new-match")

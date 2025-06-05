@@ -3,7 +3,6 @@ package com.github.ar4ik4ik.tennisscoreboard.service;
 import com.github.ar4ik4ik.tennisscoreboard.domain.Match;
 import com.github.ar4ik4ik.tennisscoreboard.domain.Player;
 import com.github.ar4ik4ik.tennisscoreboard.exceptions.MatchPersistenceException;
-import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.MatchRepository;
 import com.github.ar4ik4ik.tennisscoreboard.persistence.repository.MatchRepositoryImpl;
 import com.github.ar4ik4ik.tennisscoreboard.util.mappers.MatchEntityMapper;
 import lombok.AllArgsConstructor;

@@ -25,12 +25,12 @@ public class MatchRepository extends BaseRepository<Integer, MatchEntity> implem
     public List<MatchEntity> findAllByPlayerName(String playerName, int offset, int limit) {
         Session session = SessionManager.getSession();
         return session.createQuery("SELECT m " + "FROM   MatchEntity m "
-                + "WHERE  m.firstPlayer.name  = :name "
-                + "   OR  m.secondPlayer.name = :name "
+                + "WHERE lower(m.firstPlayer.name) LIKE :name "
+                + "OR lower(m.secondPlayer.name) LIKE :name "
                 + "order by id desc", MatchEntity.class)
                 .setFirstResult(offset)
                 .setMaxResults(limit)
-                .setParameter("name", playerName).getResultList();
+                .setParameter("name", "%" + playerName.toLowerCase() + "%").getResultList();
     }
 
     public long getObjectCount() {
@@ -42,7 +42,8 @@ public class MatchRepository extends BaseRepository<Integer, MatchEntity> implem
         Session session = SessionManager.getSession();
         return (long) session.createQuery("SELECT count(m) " +
                 "from MatchEntity m " +
-                "where m.firstPlayer.name = :name" +
-                " or m.secondPlayer.name = :name").setParameter("name", playerName).getSingleResult();
+                "where lower(m.firstPlayer.name) LIKE :name" +
+                " or (m.secondPlayer.name) LIKE :name")
+                .setParameter("name", "%" + playerName.toLowerCase() + "%").getSingleResult();
     }
 }

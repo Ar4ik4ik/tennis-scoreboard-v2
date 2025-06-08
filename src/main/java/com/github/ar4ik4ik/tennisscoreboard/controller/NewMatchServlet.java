@@ -31,11 +31,12 @@ public class NewMatchServlet extends HttpServlet {
         String firstPlayer = req.getParameter("firstPlayerName");
         String secondPlayer = req.getParameter("secondPlayerName");
 
-        log.debug("Creating new match with players {} and {}", firstPlayer, secondPlayer);
+        log.info("Creating new match with players {} and {}", firstPlayer, secondPlayer);
 
         if (isEmpty(firstPlayer) || isEmpty(secondPlayer) || firstPlayer.equals(secondPlayer)) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            req.setAttribute("error", "Имена игроков должны быть заполнены и различными");
+            log.error("Error while creating match, input parameters: firstPlayer={}, secondPlayer={}",
+                    firstPlayer, secondPlayer);
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Имена игроков должны быть заполнены и различными");
             return;
         }
 
@@ -47,7 +48,8 @@ public class NewMatchServlet extends HttpServlet {
                         .name(secondPlayer)
                         .build())
                 .build());
-
+        log.info("Success creating new match with UUID={}, and players=[firstPlayer={}, secondPlayer={}]",
+                matchUUID, firstPlayer, secondPlayer);
         resp.sendRedirect(req.getContextPath() + "/match-score?uuid=" + matchUUID);
     }
 }

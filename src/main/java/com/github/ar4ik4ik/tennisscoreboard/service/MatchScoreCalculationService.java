@@ -23,15 +23,10 @@ public class MatchScoreCalculationService {
         var matchUUID = requestDto.matchUUID();
         var match = ongoingMatchesService.getMatch(matchUUID);
         match.addPoint(chooseScoringPlayer(requestDto, match));
-        if (match.getState() == State.FINISHED) {
+        if (canFinishMatch(match)) {
             boolean removed = ongoingMatchesService.removeMatch(matchUUID, match);
             if (removed) {
-                try {
-                    finishedMatchesService.saveMatch(match);
-                } catch (MatchPersistenceException e) {
-                    ongoingMatchesService.insertMatch(matchUUID, match);
-                    throw new MatchPersistenceException(e.getMessage());
-                }
+                trySaveMatchOrThrowAndAbort(matchUUID, match);
             } else {
                  log.warn("Concurrent finish detected for match {}", matchUUID);
             }
@@ -50,6 +45,19 @@ public class MatchScoreCalculationService {
         } else {
             throw new PlayerNotFoundException(
                     String.format("Player with id %d not found", requestDto.scoringPlayerId()));
+        }
+    }
+
+    private boolean canFinishMatch(Match<Player> match) {
+        return match.getState() == State.FINISHED;
+    }
+
+    private void trySaveMatchOrThrowAndAbort(String matchUUID, Match<Player> match) throws MatchPersistenceException {
+        try {
+            finishedMatchesService.saveMatch(match);
+        } catch (MatchPersistenceException e) {
+            ongoingMatchesService.insertMatch(matchUUID, match);
+            throw new MatchPersistenceException(e.getMessage());
         }
     }
 }

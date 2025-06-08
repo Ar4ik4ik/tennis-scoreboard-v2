@@ -12,13 +12,13 @@ public class FinishedMatchesQueryService {
 
     private final MatchRepositoryImpl matchRepository;
 
+    public int getTotalPages(int maxItems) {
+        long objectCount = matchRepository.getObjectCount();
+        return (int) Math.ceil((double) objectCount / maxItems);
+    }
+
     public int getTotalPages(int maxItems, String playerName) {
-        long objectCount;
-        if (playerName == null || playerName.isBlank()) {
-            objectCount = matchRepository.getObjectCount();
-        } else {
-            objectCount = matchRepository.getObjectCount(playerName);
-        }
+        long objectCount = matchRepository.getObjectCount(playerName.trim());
         return (int) Math.ceil((double) objectCount / maxItems);
     }
 
@@ -36,7 +36,7 @@ public class FinishedMatchesQueryService {
 
         int offset = calcOffset(currentPage, limit);
 
-        return matchRepository.findAllByPlayerName(name, offset, limit)
+        return matchRepository.findAllByPlayerName(name.trim(), offset, limit)
                 .stream()
                 .map(MatchEntityMapper::fromEntity)
                 .toList();

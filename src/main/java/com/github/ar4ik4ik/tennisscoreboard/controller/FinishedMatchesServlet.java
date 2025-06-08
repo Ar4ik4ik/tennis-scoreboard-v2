@@ -31,7 +31,7 @@ public class FinishedMatchesServlet extends HttpServlet {
         int currentPage = 1;
         int maxItems = 5;
         String pageParameter = req.getParameter("page");
-        String playerNameFilter = req.getParameter("filter_by_player_name");
+        String playerNameFilter = req.getParameter("filter_by_player_name").trim();
         List<FinishedMatchResponseDto> matches;
         int totalPages;
 

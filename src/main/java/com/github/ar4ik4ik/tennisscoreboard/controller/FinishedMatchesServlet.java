@@ -31,7 +31,7 @@ public class FinishedMatchesServlet extends HttpServlet {
         int currentPage = 1;
         int maxItems = 5;
         String pageParameter = req.getParameter("page");
-        String playerNameFilter = req.getParameter("filter_by_player_name").trim();
+        String playerNameFilter = req.getParameter("filter_by_player_name");
         List<FinishedMatchResponseDto> matches;
         int totalPages;
 
@@ -57,8 +57,8 @@ public class FinishedMatchesServlet extends HttpServlet {
             log.debug("Received playerNameFilter is empty: {}," +
                     " making search without parameter, found data={}, and total pages={}", playerNameFilter, matches, totalPages);
         } else {
-            matches = finishedMatchesQueryService.getAllFinishedMatchesByName(playerNameFilter, currentPage, maxItems);
-            totalPages = finishedMatchesQueryService.getTotalPages(maxItems, playerNameFilter);
+            matches = finishedMatchesQueryService.getAllFinishedMatchesByName(playerNameFilter.trim(), currentPage, maxItems);
+            totalPages = finishedMatchesQueryService.getTotalPages(maxItems, playerNameFilter.trim());
             log.debug("Received playerNameFilter is not empty: {}," +
                     " making search without parameter, found data={}, and total pages={}", playerNameFilter, matches, totalPages);
         }

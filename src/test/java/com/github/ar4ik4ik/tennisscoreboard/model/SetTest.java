@@ -38,7 +38,7 @@ class SetTest {
                 .build();
         gameRule = new ClassicGameRules(4, 3, 1);
         setRule = new ClassicSetRules(6,2,true);
-        tieBreakRule = new ClassicTieBreakRules(7,2);
+        tieBreakRule = new ClassicTieBreakRules(2,7);
         setStrategy = new ClassicSetScoringStrategy(setRule);
         gameStrategy = new ClassicGameScoreStrategy(gameRule);
         tieBreakStrategy = new TieBreakScoringStrategy(tieBreakRule);

@@ -27,6 +27,6 @@ public class TieBreakScoringStrategy implements ScoringStrategy<Integer> {
         int scorerScore = isFirst ? score.first() : score.second();
         int opponentScore = isFirst ? score.second() : score.first();
 
-        return scorerScore >= pointsToWin && (scorerScore - opponentScore) >= winBy;
+        return scorerScore >= winBy && (scorerScore - opponentScore) >= pointsToWin;
     }
 }

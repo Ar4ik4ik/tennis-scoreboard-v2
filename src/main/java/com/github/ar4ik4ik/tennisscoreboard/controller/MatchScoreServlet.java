@@ -71,7 +71,6 @@ public class MatchScoreServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
         var uuid = req.getParameter("uuid");
         if (isEmpty(uuid)) {
             log.error("Error while getting match with id={}", uuid);

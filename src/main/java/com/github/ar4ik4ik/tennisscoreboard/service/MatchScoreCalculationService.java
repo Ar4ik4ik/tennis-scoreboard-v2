@@ -24,12 +24,7 @@ public class MatchScoreCalculationService {
         var match = ongoingMatchesService.getMatch(matchUUID);
         match.addPoint(chooseScoringPlayer(requestDto, match));
         if (canFinishMatch(match)) {
-            boolean removed = ongoingMatchesService.removeMatch(matchUUID, match);
-            if (removed) {
-                trySaveMatchOrThrowAndAbort(matchUUID, match);
-            } else {
-                 log.warn("Concurrent finish detected for match {}", matchUUID);
-            }
+            finishMatch(matchUUID, match);
         }
         return MatchMapper.fromModel(match, matchUUID);
     }
@@ -58,6 +53,15 @@ public class MatchScoreCalculationService {
         } catch (MatchPersistenceException e) {
             ongoingMatchesService.insertMatch(matchUUID, match);
             throw new MatchPersistenceException(e.getMessage());
+        }
+    }
+
+    private void finishMatch(String matchUUID, Match<Player> match) throws MatchPersistenceException {
+        boolean removed = ongoingMatchesService.removeMatch(matchUUID, match);
+        if (removed) {
+            trySaveMatchOrThrowAndAbort(matchUUID, match);
+        } else {
+            log.warn("Concurrent finish detected for match {}", matchUUID);
         }
     }
 }
